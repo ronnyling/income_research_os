@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+*.db
+*.sqlite
+
+# EDGAR ticker cache (regenerated on demand)
+data/edgar_tickers.json
+
+# Research store local exports
+data/exports/
