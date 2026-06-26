@@ -5,13 +5,14 @@ Usage:
 
 Runs:
   1. Startup staleness-triggered refresh (macro, price, filings)
-  2. Stage 0→1: EDGAR quality screen for all tickers
-  3. Stage 1→2: Dip trigger scan for PROSPECTS
-  4. Stage 2→3: KIV context check (macro regime gate)
-  5. Scoring: Income + Business + Oversold (Dip Quality stub until MiMo configured)
+  2. Stage 0->1: EDGAR quality screen for all tickers
+  3. Stage 1->2: Dip trigger scan for PROSPECTS
+  4. Stage 2->3: KIV context check (macro regime gate)
+  5. Scoring: Income + Business + Dip Quality (MiMo 2.5) + Oversold
   6. Position sizing: MYR-base, score-adjusted
   7. Rich output table with all funnel stages and recommendations
 
+Requires MIMO_API_KEY env var for full scoring (Dip Quality dimension).
 Add --use-db to persist funnel state and scores to PostgreSQL.
 """
 
@@ -21,6 +22,14 @@ import argparse
 import logging
 import sys
 import os
+
+# Force UTF-8 output on Windows (avoids cp1252 UnicodeEncodeError for box-drawing chars)
+if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except AttributeError:
+        pass  # Python < 3.7 fallback
 
 # Ensure src/ is on the path when running from project root
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(__file__)), "src"))
@@ -35,16 +44,24 @@ from rich import box
 from incomos.data.edgar import EdgarClient
 from incomos.data.market import get_price_snapshot
 from incomos.data.fred import get_usd_myr_rate
+from incomos.data.filings import FilingsClient
 from incomos.macro.regime import detect_macro_regime
 from incomos.screening.stage01 import run_quality_screen, ScreenResult
 from incomos.funnel.dip_trigger import check_dip_trigger, DipTriggerResult
 from incomos.funnel.kiv import evaluate_kiv_entry, evaluate_kiv_demotion
 from incomos.scoring.engine import score as compute_score, ScoringResult
 from incomos.sizing import compute_position_size
+from incomos.core.types import Exchange, StockRecord
+from incomos.core.exceptions import (
+    FXRateUnavailableError,
+    MimoNotConfiguredError,
+    MimoAnalysisRequiredError,
+    PriceDataUnavailableError,
+)
 
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s  %(name)s  %(message)s")
 logger = logging.getLogger("run_funnel")
-console = Console()
+console = Console(width=200)
 
 # Default income stock universe (US-listed dividend payers / candidates)
 DEFAULT_UNIVERSE = [
@@ -67,15 +84,15 @@ DEFAULT_UNIVERSE = [
 
 
 def format_pct(val: float | None) -> str:
-    return f"{val:.1%}" if val is not None else "—"
+    return f"{val:.1%}" if val is not None else "-"
 
 
 def format_float(val: float | None, decimals: int = 1) -> str:
-    return f"{val:.{decimals}f}" if val is not None else "—"
+    return f"{val:.{decimals}f}" if val is not None else "-"
 
 
 def _macro_allows_promotion(macro) -> tuple[bool, str]:
-    """Stage 2→3 gate: check if macro regime allows KIV → Candidate promotion.
+    """Stage 2->3 gate: check if macro regime allows KIV -> Candidate promotion.
 
     Returns (allowed, reason_if_blocked).
     Block states and confidence threshold are read from config.
@@ -112,25 +129,26 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
             create_schema()
             console.print("[dim]PostgreSQL schema ready.[/dim]")
         except Exception as exc:
-            console.print(f"[yellow]DB unavailable — running without persistence: {exc}[/yellow]")
+            console.print(f"[yellow]DB unavailable -- running without persistence: {exc}[/yellow]")
             use_db = False
 
     console.print()
     db_label = "[green]DB ON[/green]" if use_db else "[dim]no-db[/dim]"
     console.print(Panel(
         f"[bold cyan]Income Compounder Research OS[/bold cyan]\n"
-        f"Full Funnel Run — {start.strftime('%Y-%m-%d %H:%M UTC')}\n"
+        f"Full Funnel Run - {start.strftime('%Y-%m-%d %H:%M UTC')}\n"
         f"Universe: {len(tickers)} tickers | Portfolio: MYR {portfolio_myr:,.0f} | {db_label}",
         expand=False,
     ))
 
     # ---- Step 0: Get USD/MYR rate ---------------------------------------
     console.print("\n[bold]Fetching USD/MYR rate (FRED DEXMAUS)...[/bold]")
-    usd_myr = get_usd_myr_rate()
-    if usd_myr:
+    usd_myr: float | None = None
+    try:
+        usd_myr = get_usd_myr_rate()
         console.print(f"  USD/MYR: [green]{usd_myr:.4f}[/green]")
-    else:
-        console.print("  [yellow]USD/MYR unavailable — US stock sizing will be skipped.[/yellow]")
+    except FXRateUnavailableError:
+        console.print("  [yellow]USD/MYR unavailable (FRED DEXMAUS) -- US stock sizing will be skipped.[/yellow]")
 
     # ---- Step 1: Macro regime -------------------------------------------
     console.print("\n[bold]Computing macro regime (FRED data)...[/bold]")
@@ -149,7 +167,7 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
         macro = None
 
     # ---- Step 2: EDGAR quality screen -----------------------------------
-    console.print(f"\n[bold]Stage 0→1: Quality screen ({len(tickers)} tickers)...[/bold]")
+    console.print(f"\n[bold]Stage 0->1: Quality screen ({len(tickers)} tickers)...[/bold]")
     edgar = EdgarClient()
 
     screen_results: dict[str, ScreenResult] = {}
@@ -164,10 +182,36 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
                     checks={}, notes=[f"CIK not found in EDGAR index"],
                 )
                 continue
+            if use_db:
+                company_name = ticker
+                try:
+                    company_name = edgar.get_company_facts(cik).get("entityName", ticker)
+                except Exception:
+                    pass
+                with db_session() as conn:
+                    if conn is not None:
+                        queries.upsert_stock(
+                            conn,
+                            StockRecord(
+                                ticker=ticker,
+                                exchange=Exchange.US,
+                                company_name=company_name,
+                                cik=cik,
+                            ),
+                        )
             metrics = edgar.get_annual_metrics(ticker, cik, years=5)
             metrics_cache[ticker] = metrics
             result = run_quality_screen(ticker, metrics)
             screen_results[ticker] = result
+            if use_db:
+                with db_session() as conn:
+                    if conn is not None:
+                        queries.save_screen_result(conn, result)
+                        if result.passed:
+                            queries.transition_stage(conn, ticker, "PROSPECTS", "Passed quality screen")
+                        else:
+                            reason = "; ".join(result.notes[:2]) if result.notes else "Failed quality screen"
+                            queries.transition_stage(conn, ticker, "REJECTED", reason)
         except Exception as exc:
             screen_results[ticker] = ScreenResult(
                 ticker=ticker, passed=False,
@@ -180,7 +224,7 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
     console.print(f"  FAIL: [red]{', '.join(failed_screen) or 'none'}[/red]")
 
     # ---- Step 3: Price data + dip trigger -------------------------------
-    console.print(f"\n[bold]Stage 1→2: Dip trigger screen ({len(passed_screen)} PROSPECTS)...[/bold]")
+    console.print(f"\n[bold]Stage 1->2: Dip trigger screen ({len(passed_screen)} PROSPECTS)...[/bold]")
     dip_results: dict[str, DipTriggerResult] = {}
     price_cache: dict[str, object] = {}
 
@@ -191,11 +235,18 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
             dip = check_dip_trigger(snap)
             dip_results[ticker] = dip
         except Exception as exc:
-            console.print(f"  [yellow]{ticker}: price fetch failed — {exc}[/yellow]")
+            console.print(f"  [yellow]{ticker}: price fetch failed -- {exc}[/yellow]")
 
     triggered = [t for t, d in dip_results.items() if d.triggered]
     not_triggered = [t for t in passed_screen if t not in triggered]
-    console.print(f"  Triggered (→ KIV): [yellow]{', '.join(triggered) or 'none'}[/yellow]")
+    console.print(f"  Triggered (-> KIV): [yellow]{', '.join(triggered) or 'none'}[/yellow]")
+
+    if use_db:
+        for ticker in triggered:
+            dip = dip_results[ticker]
+            with db_session() as conn:
+                if conn is not None:
+                    queries.transition_stage(conn, ticker, "KIV", f"Dip trigger: {dip.trigger_strength}")
 
     # Print dip details for triggered stocks
     for ticker in triggered:
@@ -211,7 +262,7 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
 
     console.print(f"  Not triggered: {', '.join(not_triggered) or 'none'}")
 
-    # ---- Step 4: Stage 2→3 gate + scoring -------------------------------
+    # ---- Step 4: Stage 2->3 gate + scoring -------------------------------
     score_results: dict[str, ScoringResult] = {}
     sizing_results: dict[str, object] = {}
     macro_blocked: list[str] = []
@@ -219,8 +270,8 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
 
     if triggered:
         if not macro_allowed:
-            console.print(f"\n[bold yellow]Stage 2→3 gate BLOCKED:[/bold yellow] {macro_block_reason}")
-            console.print("  [dim]Stocks remain in KIV — no promotion to Candidate this run.[/dim]")
+            console.print(f"\n[bold yellow]Stage 2->3 gate BLOCKED:[/bold yellow] {macro_block_reason}")
+            console.print("  [dim]Stocks remain in KIV -- no promotion to Candidate this run.[/dim]")
             macro_blocked = triggered[:]
             # Persist KIV state in DB if enabled
             if use_db:
@@ -229,16 +280,64 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
                         if conn is not None:
                             queries.transition_stage(conn, ticker, "KIV", f"Macro gate blocked: {macro_block_reason}")
         else:
-            console.print(f"\n[bold]Stage 2→3: Context check + scoring ({len(triggered)} KIV stocks)...[/bold]")
+            console.print(f"\n[bold]Stage 2->3: Context check + scoring ({len(triggered)} KIV stocks)...[/bold]")
             if macro:
                 mkt = str(macro.market_structure.state).split('.')[-1]
-                console.print(f"  [dim]Macro gate: {mkt} — promotion allowed[/dim]")
+                console.print(f"  [dim]Macro gate: {mkt} -- promotion allowed[/dim]")
+
+            # MiMo integration: try to fetch filings text for dip classification
+            from incomos.core.config import get_settings
+            mimo_enabled = bool(get_settings().mimo_api_key)
+            if mimo_enabled:
+                console.print("  [dim]MiMo 2.5 configured -- running dip classification...[/dim]")
+                from incomos.llm.mimo import analyze_dip
+                filings_client = FilingsClient()
+            else:
+                console.print("  [yellow]MIMO_API_KEY not set -- Dip Quality scoring unavailable.[/yellow]")
+                console.print("  [yellow]Set MIMO_API_KEY to enable full scoring. KIV stocks will not be promoted.[/yellow]")
 
             for ticker in triggered:
                 try:
                     snap = price_cache.get(ticker)
                     mets = metrics_cache.get(ticker, [])
-                    result = compute_score(ticker, mets, price_snap=snap)
+
+                    # Fetch MiMo dip analysis if configured
+                    mimo_result = None
+                    if mimo_enabled:
+                        try:
+                            cik = edgar.resolve_cik(ticker)
+                            if cik:
+                                current_secs, prior_secs = filings_client.get_yoy_sections(ticker, cik)
+                            else:
+                                current_secs, prior_secs = {}, {}
+                            _mda_sec = current_secs.get("MDAA")
+                            mda = _mda_sec.text if _mda_sec else ""
+                            _risk_cur = current_secs.get("RISK_FACTORS")
+                            risk_current = _risk_cur.text if _risk_cur else ""
+                            _risk_prior = prior_secs.get("RISK_FACTORS")
+                            risk_prior = _risk_prior.text if _risk_prior else ""
+                            filing_text_len = len(mda) + len(risk_current)
+                            if filing_text_len < 200:
+                                console.print(f"  [yellow]{ticker}: filing sections empty (EDGAR primary_document may be iXBRL/index) -- skipping MiMo[/yellow]")
+                                continue
+                            macro_ctx = f"{str(macro.primary_regime)} growth={str(macro.growth.state).split('.')[-1]}" if macro else ""
+                            validated = analyze_dip(
+                                ticker=ticker,
+                                mda_text=mda,
+                                risk_factors_current=risk_current,
+                                risk_factors_prior=risk_prior,
+                                macro_context=macro_ctx,
+                            )
+                            mimo_result = validated.model_dump() if validated else None
+                            console.print(f"  [dim]{ticker}: MiMo classification = {mimo_result.get('classification','?')} (conf={mimo_result.get('confidence',0):.2f})[/dim]")
+                        except Exception as exc:
+                            console.print(f"  [yellow]{ticker}: MiMo analysis failed -- {exc}[/yellow]")
+
+                    if mimo_result is None:
+                        console.print(f"  [dim]{ticker}: skipping score (MiMo analysis failed)[/dim]")
+                        continue
+
+                    result = compute_score(ticker, mets, snap, mimo_result)
                     score_results[ticker] = result
 
                     sizing = compute_position_size(
@@ -281,7 +380,7 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
             if ticker in dip_results:
                 d = dip_results[ticker]
                 snap = price_cache.get(ticker)
-                rsi_str = f"RSI={snap.rsi_14:.1f}" if snap and snap.rsi_14 else "RSI=—"
+                rsi_str = f"RSI={snap.rsi_14:.1f}" if snap and snap.rsi_14 else "RSI=N/A"
                 console.print(
                     f"  [dim]{ticker}: {d.pct_below_52w_high:.1%} below 52W high, {rsi_str}[/dim]"
                 )
@@ -290,22 +389,21 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False) -
     console.print(f"\n[dim]Run completed in {elapsed:.1f}s[/dim]")
     console.print()
 
-    # ---- Note on partial scores -----------------------------------------
-    gap_lines = [
-        "[bold yellow]DQ stubs:[/bold yellow] Dip Quality = neutral 50 until MiMo 2.5 configured.",
-        "  Run [cyan]scripts/_dip_analysis.py[/cyan] for live MiMo dip classification.",
-        "",
-        "[bold yellow]Gap A:[/bold yellow] MiMo few-shot grounding dataset not built — "
-        "schema-constrained output mandatory.",
-        "[bold yellow]Gap B:[/bold yellow] Forward-return threshold undefined — use "
-        "backtest/validation.py once entries accumulate.",
-    ]
+    # ---- Note on status -----------------------------------------
+    gap_lines = []
+    from incomos.core.config import get_settings as _gs
+    if not _gs().mimo_api_key:
+        gap_lines.append(
+            "[bold yellow]Action needed:[/bold yellow] Set MIMO_API_KEY to enable Dip Quality scoring.\n"
+            "  Without it, triggered KIV stocks cannot be scored or promoted to Candidate."
+        )
     if not use_db:
         gap_lines.append(
             "[bold yellow]No-DB mode:[/bold yellow] Add [cyan]--use-db[/cyan] to persist "
             "funnel state to PostgreSQL."
         )
-    console.print(Panel("\n".join(gap_lines), title="Architecture Status", expand=False))
+    if gap_lines:
+        console.print(Panel("\n".join(gap_lines), title="Status", expand=False))
 
 
 def _print_summary_table(
@@ -337,14 +435,14 @@ def _print_summary_table(
         sz = sizing_results.get(ticker)
 
         if not sr:
-            t.add_row(ticker, "ERROR", *["—"] * 9, "No data")
+            t.add_row(ticker, "ERROR", *["-"] * 9, "No data")
             continue
 
         if not sr.passed:
             note = "; ".join(sr.notes[:2]) if sr.notes else ""
             t.add_row(
                 ticker, "[red]REJECTED[/red]",
-                "—", "—", "—", "—", "—", "—", "—", "—", "—",
+                "-", "-", "-", "-", "-", "-", "-", "-", "-",
                 f"[dim]{note[:30]}[/dim]"
             )
             continue
@@ -357,8 +455,8 @@ def _print_summary_table(
         else:
             stage = "[yellow]KIV[/yellow]"
 
-        dip_pct = f"{dr.pct_below_52w_high:.1%}" if dr else "—"
-        rsi_str = f"{dr.rsi:.1f}" if dr and dr.rsi else "—"
+        dip_pct = f"{dr.pct_below_52w_high:.1%}" if dr else "-"
+        rsi_str = f"{dr.rsi:.1f}" if dr and dr.rsi else "-"
 
         if sc:
             iq = f"{sc.income_quality:.1f}"
@@ -371,13 +469,16 @@ def _print_summary_table(
             if sz and sz.adjusted_position_myr > 0:
                 size_str = f"MYR {sz.adjusted_position_myr:,.0f}"
             else:
-                size_str = "—"
-            note_str = "; ".join(sc.partial_reasons[:2])
+                size_str = "-"
+            note_str = "; ".join(sc.partial_reasons[:2]) if sc.partial_reasons else ""
         else:
-            iq = bq = dq = oc = composite = "—"
-            mult = "—"
-            size_str = "—"
-            note_str = "Not scored (no dip trigger)"
+            iq = bq = dq = oc = composite = "-"
+            mult = "-"
+            size_str = "-"
+            if dr and dr.triggered:
+                note_str = "KIV -- awaiting MiMo analysis"
+            else:
+                note_str = "Not scored (no dip trigger)"
 
         # Color code score
         if sc and sc.composite >= 70:
@@ -390,7 +491,7 @@ def _print_summary_table(
         t.add_row(ticker, stage, dip_pct, rsi_str, iq, bq, dq, oc, composite, mult, size_str, note_str)
 
     console.print(t)
-    console.print("[dim]* DQ = Dip Quality — stub (50) pending MiMo 2.5 configuration[/dim]")
+    console.print("[dim]DQ = Dip Quality (MiMo 2.5). Requires MIMO_API_KEY.[/dim]")
 
 
 def main():

@@ -67,8 +67,3 @@ def compute_dip_quality(
         "flag_penalty": flag_penalty,
     }
 
-
-from __future__ import annotations
-
-import logging
-

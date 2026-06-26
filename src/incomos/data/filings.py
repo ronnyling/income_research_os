@@ -20,6 +20,7 @@ Per architecture:
 
 from __future__ import annotations
 
+import html
 import logging
 import re
 import time
@@ -106,11 +107,22 @@ def _fetch_document(cik: str, accession_number: str, document_name: str) -> str:
 
 
 def _clean_html(text: str) -> str:
-    """Strip HTML/iXBRL tags and collapse whitespace."""
+    """Strip HTML/iXBRL tags and collapse whitespace.
+
+    iXBRL filings embed XBRL context/unit definitions in the document body
+    (inside <ix:header> or <head>) that can contain text matching section-header
+    patterns.  These blocks must be removed before section extraction.
+    """
+    # Remove <head> section (metadata, XBRL schema links, context definitions)
+    text = re.sub(r"<head[^>]*>.*?</head>", " ", text, flags=re.DOTALL | re.IGNORECASE)
+    # Remove iXBRL header block (context/unit/reference definitions inside <body>)
+    text = re.sub(r"<ix:header[^>]*>.*?</ix:header>", " ", text, flags=re.DOTALL | re.IGNORECASE)
     # Remove script/style blocks
     text = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", text, flags=re.DOTALL | re.IGNORECASE)
     # Remove HTML tags (including iXBRL namespaced tags like <ix:nonNumeric>)
     text = re.sub(r"<[^>]+>", " ", text)
+    # Decode entities like &#8217; and &nbsp; before regex section matching.
+    text = html.unescape(text)
     # Collapse whitespace
     text = re.sub(r"\s+", " ", text).strip()
     return text
@@ -130,33 +142,78 @@ _SECTION_PATTERNS: dict[str, list[str]] = {
 
 _NEXT_ITEM = re.compile(r"(?i)\bitem\s+\d+[a-z]?\b[\.\-\s]", re.MULTILINE)
 
+def _find_body_document_via_index(cik: str, accession_number: str) -> str | None:
+    """Fetch EDGAR filing index to locate the main 10-K body document.
+
+    Used when the primary document doesn\'t yield extractable sections.
+    Looks for the document with Type = \'10-K\' in the filing index table.
+    Returns the filename (not full URL), or None if not found.
+    """
+    cik_int = str(int(cik))  # archive URLs use CIK without leading zeros
+    acc_clean = accession_number.replace("-", "")
+    index_url = (
+        f"https://www.sec.gov/Archives/edgar/data"
+        f"/{cik_int}/{acc_clean}/{accession_number}-index.htm"
+    )
+    time.sleep(_RATE_DELAY)
+    try:
+        with httpx.Client(timeout=30, follow_redirects=True) as client:
+            resp = client.get(index_url, headers=_HEADERS)
+            resp.raise_for_status()
+    except Exception as exc:
+        logger.debug("Filing index fetch failed (%s): %s", accession_number, exc)
+        return None
+
+    # The EDGAR filing index table has rows with the actual 10-K body document,
+    # but the link may appear as /ix?doc=/Archives/.../<file>.htm and may carry
+    # extra markup in the same cell. Parse rows rather than relying on a fixed
+    # column order.
+    for row_match in re.finditer(r"(?is)<tr[^>]*>(.*?)</tr>", resp.text):
+        row = row_match.group(1)
+        if not re.search(r"(?i)\b10-k\b", row):
+            continue
+
+        href_match = re.search(r'(?is)<a[^>]+href="([^"]+?)"', row)
+        if not href_match:
+            continue
+
+        href = html.unescape(href_match.group(1))
+        if "doc=" in href:
+            href = href.split("doc=", 1)[1]
+        filename = href.split("/")[-1]
+        if filename.endswith(".htm") or filename.endswith(".html"):
+            logger.debug("Filing index resolved body document: %s", filename)
+            return filename
+
+    logger.debug("No 10-K body document found in filing index for %s", accession_number)
+    return None
 
 def _extract_section(text: str, section_name: str) -> tuple[str, bool]:
     """Locate a section in clean text and return (content, truncated)."""
     patterns = _SECTION_PATTERNS.get(section_name, [])
-    start_pos: int | None = None
+    best_section = ""
     for pattern in patterns:
-        m = re.search(pattern, text)
-        if m:
-            start_pos = m.start()
-            break
+        for m in re.finditer(pattern, text):
+            section_text = text[m.start():]
 
-    if start_pos is None:
+            # End of section = next "Item X" heading that is not the current one.
+            matches = list(_NEXT_ITEM.finditer(section_text))
+            if len(matches) > 1:
+                section_text = section_text[: matches[1].start()]
+
+            section_text = section_text.strip()
+            if len(section_text) > len(best_section):
+                best_section = section_text
+
+    if not best_section:
         return "", False
 
-    section_text = text[start_pos:]
-
-    # End of section = next "Item X" heading that is not the current one
-    matches = list(_NEXT_ITEM.finditer(section_text))
-    if len(matches) > 1:
-        section_text = section_text[: matches[1].start()]
-
     truncated = False
-    if len(section_text) > _MAX_SECTION_CHARS:
-        section_text = section_text[:_MAX_SECTION_CHARS]
+    if len(best_section) > _MAX_SECTION_CHARS:
+        best_section = best_section[:_MAX_SECTION_CHARS]
         truncated = True
 
-    return section_text.strip(), truncated
+    return best_section, truncated
 
 
 # ---------------------------------------------------------------------------
@@ -210,10 +267,30 @@ class FilingsClient:
             return {}
 
         clean_text = _clean_html(raw_html)
-        result: dict[str, FilingSection] = {}
 
+        # Gap F: if the primary document is an iXBRL cover/index page it may yield
+        # no recognisable section text.  In that case look up the actual 10-K body
+        # document via the filing index and retry.
+        extracted = {s: _extract_section(clean_text, s) for s in sections}
+        if all(not text for text, _ in extracted.values()):
+            body_doc = _find_body_document_via_index(cik, filing["accession_number"])
+            if body_doc and body_doc != filing["primary_document"]:
+                logger.info(
+                    "%s: primary doc yielded no sections; retrying with body doc %s",
+                    ticker, body_doc,
+                )
+                try:
+                    raw_html = _fetch_document(cik, filing["accession_number"], body_doc)
+                    clean_text = _clean_html(raw_html)
+                    extracted = {s: _extract_section(clean_text, s) for s in sections}
+                except Exception as exc:
+                    logger.warning(
+                        "%s: fallback body document %s failed: %s", ticker, body_doc, exc
+                    )
+
+        result: dict[str, FilingSection] = {}
         for section in sections:
-            text, truncated = _extract_section(clean_text, section)
+            text, truncated = extracted[section]
             result[section] = FilingSection(
                 ticker=ticker,
                 cik=cik,

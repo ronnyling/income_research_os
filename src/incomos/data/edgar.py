@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -51,6 +52,8 @@ _XBRL_TAG_MAP: dict[str, list[str]] = {
         "RevenueNet",
         "SalesRevenue",
         "RevenueFromContractWithCustomer",
+        # Regulated utilities (e.g. Duke Energy) use a non-standard revenue tag
+        "RegulatedAndUnregulatedOperatingRevenue",
     ],
     "net_income": [
         "NetIncomeLoss",
@@ -69,7 +72,8 @@ _XBRL_TAG_MAP: dict[str, list[str]] = {
         "PaymentsOfDividendsCommonStock",
         "PaymentsOfDividends",
         "PaymentsOfOrdinaryDividends",
-        "DividendsCommonStockCash",       # used by some large-caps (e.g. Accenture)
+        "DividendsCommonStockCash",
+        "DividendsCommonStock",           # ACN switched to this tag in FY2023+
         "DividendsCashPaid",
         "PaymentsOfDividendsCommonStockAndPreferredStock",
     ],
@@ -198,6 +202,20 @@ class EdgarClient:
         url = f"{_EDGAR_BASE}/submissions/CIK{cik}.json"
         return self._get(url)
 
+    def get_sic(self, cik: str) -> str | None:
+        """Return the 4-digit SIC code string for a company, or None.
+
+        Used by the quality screen to apply utility-specific FCF thresholds.
+        The SIC code lives in the EDGAR submissions JSON.
+        """
+        try:
+            info = self.get_company_info(cik)
+            sic = info.get("sic")
+            return str(sic) if sic else None
+        except Exception as exc:
+            logger.warning("Failed to fetch SIC for CIK %s: %s", cik, exc)
+            return None
+
     # ------------------------------------------------------------------
     # Metric extraction
     # ------------------------------------------------------------------
@@ -216,14 +234,23 @@ class EdgarClient:
         """
         tags = _XBRL_TAG_MAP.get(metric, [])
         gaap = facts.get("facts", {}).get("us-gaap", {})
+        # DPS metrics are denominated in USD/shares; all others in USD.
+        # The 'shares' key is not used — it holds share counts, not dollar amounts.
+        _dps_metrics = {"dps_declared", "dps_paid"}
+        preferred_units = ["USD/shares"] if metric in _dps_metrics else ["USD"]
+        staleness_cutoff = date.today().year - 3  # reject a tag's data if its most recent FY is older than 3 years; try newer tag
 
+        best_result: list[tuple[int, float]] = []
         for tag in tags:
             tag_data = gaap.get(tag)
             if not tag_data:
                 continue
             units = tag_data.get("units", {})
-            # Most financial metrics are in USD
-            entries = units.get("USD") or units.get("shares") or []
+            entries: list[dict] = []
+            for unit_key in preferred_units:
+                entries = units.get(unit_key, [])
+                if entries:
+                    break
             annual = [
                 e for e in entries
                 if e.get("fp") == "FY" and e.get("form") in ("10-K", "10-K/A")
@@ -246,10 +273,24 @@ class EdgarClient:
                 [(fy, entry["val"]) for fy, entry in by_year.items()],
                 key=lambda x: x[0],
             )
-            logger.debug("  %s → tag '%s': %d annual entries", metric, tag, len(result))
-            return result
+            if not result:
+                continue
 
-        logger.debug("  %s → no matching XBRL tag found (tried: %s)", metric, tags)
+            most_recent_fy = result[-1][0]
+            if most_recent_fy >= staleness_cutoff:
+                # Recent data found — use it immediately
+                logger.debug("  %s -> tag '%s': %d annual entries (most recent FY %d)", metric, tag, len(result), most_recent_fy)
+                return result
+            else:
+                # Data exists but is stale; keep as fallback and try next tag
+                logger.debug("  %s -> tag '%s': stale data (most recent FY %d < cutoff %d), trying next", metric, tag, most_recent_fy, staleness_cutoff)
+                if not best_result:
+                    best_result = result
+
+        if best_result:
+            logger.debug("  %s -> all tags stale; returning best available data", metric)
+            return best_result
+        logger.debug("  %s -> no matching XBRL tag found (tried: %s)", metric, tags)
         return []
 
     def get_annual_metrics(
@@ -265,6 +306,9 @@ class EdgarClient:
         logger.info("Fetching XBRL company facts for %s (CIK %s)...", ticker, cik)
         facts = self.get_company_facts(cik)
         entity_name = facts.get("entityName", ticker)
+
+        # Fetch SIC code for utility detection (quality screen Gap G)
+        sic_code = self.get_sic(cik)
 
         # Extract all series
         series: dict[str, list[tuple[int, float]]] = {}
@@ -302,6 +346,7 @@ class EdgarClient:
                 cik=cik,
                 fiscal_year=fy,
                 fiscal_period="FY",
+                sic_code=sic_code,
                 revenue=_get("revenue"),
                 net_income=_get("net_income"),
                 operating_cash_flow=_get("operating_cash_flow"),

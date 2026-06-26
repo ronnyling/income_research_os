@@ -60,6 +60,19 @@ def run_quality_screen(ticker: str, metrics: list[XBRLMetrics]) -> ScreenResult:
     recent = sorted_metrics[-5:]  # At most 5 years
     latest = sorted_metrics[-1]
 
+    # Gap G: regulated utilities have structurally negative FCF due to mandated capex.
+    # Use a relaxed FCF threshold when the SIC code indicates a regulated utility.
+    sic = latest.sic_code or ""
+    is_utility = (
+        sic.isdigit()
+        and cfg.utility_sic_min <= int(sic) <= cfg.utility_sic_max
+    )
+    effective_min_fcf_years = (
+        cfg.min_fcf_positive_years_utility if is_utility else cfg.min_fcf_positive_years
+    )
+    if is_utility:
+        notes.append(f"Regulated utility detected (SIC {sic}) -- FCF threshold relaxed to ≥{effective_min_fcf_years} of {len(recent)} years.")
+
     # ------------------------------------------------------------------
     # Check 1: Dividend continuity
     # A year counts as a "dividend year" if ANY of these is positive:
@@ -101,11 +114,11 @@ def run_quality_screen(ticker: str, metrics: list[XBRLMetrics]) -> ScreenResult:
         m for m in recent
         if m.free_cash_flow is not None and m.free_cash_flow > 0
     ]
-    checks["fcf_positive"] = len(fcf_positive_years) >= cfg.min_fcf_positive_years
+    checks["fcf_positive"] = len(fcf_positive_years) >= effective_min_fcf_years
     if not checks["fcf_positive"]:
         notes.append(
             f"FCF positive in only {len(fcf_positive_years)} of last {len(recent)} years "
-            f"(need ≥{cfg.min_fcf_positive_years})."
+            f"(need ≥{effective_min_fcf_years})."
         )
 
     # ------------------------------------------------------------------

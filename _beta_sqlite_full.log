@@ -1,0 +1,78 @@
+PostgreSQL schema ready.
+
+┌───────────────────────────────────────────────────────┐
+│ Income Compounder Research OS                         │
+│ Full Funnel Run - 2026-06-25 09:17 UTC                │
+│ Universe: 15 tickers | Portfolio: MYR 500,000 | DB ON │
+└───────────────────────────────────────────────────────┘
+
+Fetching USD/MYR rate (FRED DEXMAUS)...
+  USD/MYR: 4.1150
+
+Computing macro regime (FRED data)...
+  Market:   RANGING (confidence 0.75)
+  Growth:   EXPANSION (confidence 0.75)
+  Rates:    STABLE (confidence 0.85)
+  FinCond:  LOOSE (confidence 0.75)
+
+Stage 0->1: Quality screen (15 tickers)...
+  PASS: KO, JNJ, PG, MMM, ABT, MCD, V, ACN, MSFT, VZ, MDT
+  FAIL: NEE, DUK, T, AMZN
+
+Stage 1->2: Dip trigger screen (11 PROSPECTS)...
+  Triggered (-> KIV): ABT, MCD, ACN, MSFT, VZ, MDT
+    ABT  pct_below=32.8%  RSI=60.1  vol_ratio=1.30  [WEAK]
+    MCD  pct_below=18.7%  RSI=50.7  vol_ratio=1.10  [WEAK]
+    ACN  pct_below=57.1%  RSI=13.2  vol_ratio=2.39  [STRONG]
+    MSFT  pct_below=32.2%  RSI=17.9  vol_ratio=1.12  [STRONG]
+    VZ  pct_below=9.8%  RSI=45.2  vol_ratio=1.29  [MODERATE]
+    MDT  pct_below=22.8%  RSI=56.9  vol_ratio=0.99  [WEAK]
+  Not triggered: KO, JNJ, PG, MMM, V
+
+Stage 2->3: Context check + scoring (6 KIV stocks)...
+  Macro gate: RANGING -- promotion allowed
+  MiMo 2.5 configured -- running dip classification...
+  ABT: MiMo classification = TRANSIENT (conf=0.85)
+WARNING  incomos.persistence.queries  transition_stage: ticker 'ABT' not found in stocks table.
+  MCD: MiMo classification = TRANSIENT (conf=0.65)
+WARNING  incomos.persistence.queries  transition_stage: ticker 'MCD' not found in stocks table.
+  ACN: MiMo classification = CYCLICAL_IDIOSYNCRATIC (conf=0.70)
+WARNING  incomos.persistence.queries  transition_stage: ticker 'ACN' not found in stocks table.
+  MSFT: MiMo classification = UNKNOWN (conf=0.60)
+WARNING  incomos.persistence.queries  transition_stage: ticker 'MSFT' not found in stocks table.
+  VZ: MiMo classification = CYCLICAL_IDIOSYNCRATIC (conf=0.75)
+WARNING  incomos.persistence.queries  transition_stage: ticker 'VZ' not found in stocks table.
+  MDT: MiMo classification = CYCLICAL_IDIOSYNCRATIC (conf=0.75)
+WARNING  incomos.persistence.queries  transition_stage: ticker 'MDT' not found in stocks table.
+
+                                                                   Funnel Summary                                                                   
+                                                                                                                                                    
+  Ticker     Stage             Dip%      RSI       IQ       BQ      DQ*       OC     Score    Mult     Size (MYR)   Notes                           
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  KO         PROSPECTS         3.0%     58.6        -        -        -        -         -       -              -   Not scored (no dip trigger)     
+  JNJ        PROSPECTS         2.5%     70.1        -        -        -        -         -       -              -   Not scored (no dip trigger)     
+  PG         PROSPECTS         8.4%     73.0        -        -        -        -         -       -              -   Not scored (no dip trigger)     
+  MMM        PROSPECTS         4.1%     82.4        -        -        -        -         -       -              -   Not scored (no dip trigger)     
+  ABT        KIV              32.8%     60.1     83.0     63.0     81.9     38.0      72.2    1.0×     MYR 25,000                                   
+  MCD        KIV              18.7%     50.7     87.0     70.0     74.4     20.0      71.4    1.0×     MYR 25,000                                   
+  NEE        REJECTED             -        -        -        -        -        -         -       -              -   Regulated utility detected (SI  
+  DUK        REJECTED             -        -        -        -        -        -         -       -              -   Regulated utility detected (SI  
+  V          PROSPECTS         6.7%     68.8        -        -        -        -         -       -              -   Not scored (no dip trigger)     
+  ACN        KIV              57.1%     13.2     92.0     60.0     53.5     95.0      71.1    1.0×     MYR 25,000                                   
+  MSFT       KIV              32.2%     17.9     95.0     95.0     50.0     74.0      79.4    1.0×     MYR 25,000                                   
+  VZ         KIV               9.8%     45.2     82.0     41.0     53.8     17.0      54.7    0.6×     MYR 15,000                                   
+  T          REJECTED             -        -        -        -        -        -         -       -              -   FCF positive in only 0 of last  
+  AMZN       REJECTED             -        -        -        -        -        -         -       -              -   Dividend confirmed in only 0 o  
+  MDT        KIV              22.8%     56.9     80.0     35.0     53.8     26.0      53.2    0.6×     MYR 15,000                                   
+                                                                                                                                                    
+DQ = Dip Quality (MiMo 2.5). Requires MIMO_API_KEY.
+
+Stocks passing quality screen but NOT in dip:
+  KO: 3.0% below 52W high, RSI=58.6
+  JNJ: 2.5% below 52W high, RSI=70.1
+  PG: 8.4% below 52W high, RSI=73.0
+  MMM: 4.1% below 52W high, RSI=82.4
+  V: 6.7% below 52W high, RSI=68.8
+
+Run completed in 435.5s
+

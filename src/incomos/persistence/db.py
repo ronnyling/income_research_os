@@ -30,6 +30,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     create_engine,
+    func,
     text,
 )
 from sqlalchemy.engine import Engine
@@ -58,8 +59,8 @@ stocks = Table(
     Column("dip_severity_pct", Float, nullable=True),
     Column("conviction_note", Text, nullable=True),
     Column("annotation_size_multiplier", Float, nullable=True),
-    Column("created_at", DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
-    Column("updated_at", DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
+    Column("updated_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
 )
 
 refresh_log = Table(
@@ -93,7 +94,7 @@ xbrl_metrics = Table(
     Column("free_cash_flow", Float, nullable=True),         # computed, stored for convenience
     Column("fcf_payout_ratio", Float, nullable=True),
     Column("net_debt", Float, nullable=True),
-    Column("extracted_at", DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    Column("extracted_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
     UniqueConstraint("ticker", "fiscal_year", "fiscal_period", name="uq_xbrl_metrics"),
 )
 
@@ -105,7 +106,7 @@ screen_results = Table(
     Column("passed", Boolean, nullable=False),
     Column("checks", JSON, nullable=False),                 # {check_name: bool}
     Column("notes", JSON, nullable=False),                  # [string]
-    Column("screened_at", DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    Column("screened_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
 )
 
 filing_memos = Table(
@@ -116,7 +117,7 @@ filing_memos = Table(
     Column("memo_type", String(50), nullable=False),        # XBRL_METRICS | DIP_ANALYSIS | etc.
     Column("content", JSON, nullable=False),
     Column("validated", Boolean, nullable=False, server_default=text("FALSE")),
-    Column("created_at", DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
     Column("valid_until", DateTime(timezone=True), nullable=True),
 )
 
@@ -131,7 +132,7 @@ opportunity_scores = Table(
     Column("oversold_confidence", Float, nullable=False),
     Column("composite", Float, nullable=False),
     Column("base_size_multiplier", Float, nullable=False),
-    Column("scored_at", DateTime(timezone=True), nullable=False, server_default=text("NOW()")),
+    Column("scored_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
 )
 
 

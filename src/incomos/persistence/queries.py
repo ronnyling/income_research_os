@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.engine import Connection
 
 from incomos.core.types import (
@@ -37,6 +38,13 @@ from incomos.persistence.db import (
 logger = logging.getLogger(__name__)
 
 
+def _dialect_insert(conn: Connection, table):
+    """Return an INSERT builder with ON CONFLICT support for the active dialect."""
+    if conn.dialect.name == "sqlite":
+        return sqlite_insert(table)
+    return pg_insert(table)
+
+
 # ------------------------------------------------------------------
 # Stocks (funnel state)
 # ------------------------------------------------------------------
@@ -45,7 +53,7 @@ logger = logging.getLogger(__name__)
 def upsert_stock(conn: Connection, record: StockRecord) -> None:
     """Insert or update a stock's funnel state."""
     stmt = (
-        pg_insert(stocks)
+        _dialect_insert(conn, stocks)
         .values(
             ticker=record.ticker,
             exchange=record.exchange.value,
@@ -133,7 +141,7 @@ def get_kiv_stocks(conn: Connection) -> list[tuple[str, datetime]]:
 def upsert_xbrl_metrics(conn: Connection, m: XBRLMetrics) -> None:
     """Insert or update annual XBRL metrics for a ticker/year combination."""
     stmt = (
-        pg_insert(xbrl_metrics)
+        _dialect_insert(conn, xbrl_metrics)
         .values(
             ticker=m.ticker,
             cik=m.cik,
@@ -155,7 +163,7 @@ def upsert_xbrl_metrics(conn: Connection, m: XBRLMetrics) -> None:
             extracted_at=m.extracted_at,
         )
         .on_conflict_do_update(
-            constraint="uq_xbrl_metrics",
+            index_elements=["ticker", "fiscal_year", "fiscal_period"],
             set_={
                 "revenue": m.revenue,
                 "net_income": m.net_income,
@@ -245,10 +253,10 @@ def update_refresh_timestamp(
     """
     now = datetime.now(timezone.utc)
     stmt = (
-        pg_insert(refresh_log)
+        _dialect_insert(conn, refresh_log)
         .values(data_type=data_type, ticker=ticker, last_refresh=now)
         .on_conflict_do_update(
-            constraint="uq_refresh_log_type_ticker",
+            index_elements=["data_type", "ticker"],
             set_={"last_refresh": now},
         )
     )

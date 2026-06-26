@@ -157,9 +157,19 @@ class FilingCfg(BaseModel):
 
 
 class BacktestCfg(BaseModel):
-    """Forward-return calibration defaults (Gap B: threshold is never hardcoded here)."""
+    """Forward-return calibration defaults."""
     default_horizons: str = Field(default="30,90,180,365")
     score_bucket_boundaries: str = Field(default="0,60,70,80,100")
+    # Gap B: minimum hit-rate a score bucket must achieve to be considered reliable.
+    # 90-day horizon is the primary signal; 180-day is secondary confirmation.
+    min_return_threshold_90d: float = Field(default=0.05, ge=0.0,
+        description="Min total-return threshold to count as a 'hit' at 90d (default 5%)")
+    min_hit_rate_90d: float = Field(default=0.55, ge=0.0, le=1.0,
+        description="Min fraction of entries that must clear the 90d threshold to call a bucket reliable")
+    min_return_threshold_180d: float = Field(default=0.08, ge=0.0,
+        description="Min total-return threshold at 180d (default 8%)")
+    min_hit_rate_180d: float = Field(default=0.50, ge=0.0, le=1.0,
+        description="Min fraction of entries that must clear the 180d threshold")
 
     def horizons_list(self) -> list[int]:
         return [int(h.strip()) for h in self.default_horizons.split(",")]
@@ -195,6 +205,12 @@ class Settings(BaseSettings):
     min_dividend_years: int = Field(default=3, ge=1)
     max_fcf_payout_ratio: float = Field(default=0.90, gt=0, le=1.0)
     min_fcf_positive_years: int = Field(default=3, ge=1)
+    # Gap G: regulated utilities (SIC 4900-4999) have structurally negative FCF
+    # due to mandated capex recovery programs.  Use a relaxed FCF threshold for them.
+    min_fcf_positive_years_utility: int = Field(default=1, ge=0,
+        description="FCF positivity years required for regulated utilities (SIC 4900-4999)")
+    utility_sic_min: int = Field(default=4900)
+    utility_sic_max: int = Field(default=4999)
 
     # ── Staleness thresholds (hours) ─────────────────────────────────────
     staleness_macro_hours: float = 24.0

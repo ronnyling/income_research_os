@@ -75,13 +75,20 @@ def calibration_report_csv(
 
     CSV must have columns: ticker, entry_date, entry_price, opportunity_score, exchange
 
-    threshold (Gap B):
+    threshold:
       Return threshold for hit_rate calculation (e.g. 0.05 = 5%).
-      If not provided, hit_rate will be null in the report.
-      Do NOT supply a default — the architecture has not defined this threshold.
+      If not provided, defaults to the configured backtest threshold for the
+      requested horizon (min_return_threshold_90d or min_return_threshold_180d).
 
     Returns the calibration report as a dict.
     """
+    from incomos.core.config import get_settings
+    cfg = get_settings().backtest
+    if threshold is None:
+        if horizon_days <= 90:
+            threshold = cfg.min_return_threshold_90d
+        else:
+            threshold = cfg.min_return_threshold_180d
     try:
         import pandas as pd
         df = pd.read_csv(csv_path)

@@ -146,13 +146,12 @@ class XBRLMetrics(BaseModel):
 
     All monetary values are in USD (EDGAR native). MYR conversion is applied
     at scoring time using the daily USD/MYR rate from FRED (series DEXMAUS).
-
-    Gap D: USD/MYR FX feed must be implemented before cross-market scoring.
     """
     ticker: str
     cik: str
     fiscal_year: int
     fiscal_period: str          # "FY" for annual
+    sic_code: str | None = None  # EDGAR SIC code, e.g. "4911" for electric utilities
 
     revenue: float | None = None
     net_income: float | None = None

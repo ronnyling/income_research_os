@@ -2,7 +2,7 @@
 
 A funnel-based, agentic investment research platform that surfaces quality income stocks at dip entry points — not a trading bot, a decision-support system with human-in-the-loop confirmation.
 
-**Current status:** Core pipeline complete and production-hardened. 64 unit tests passing. MiMo 2.5 integration live — API key required for Stage 3+ scoring.
+**Current status:** Core pipeline production-hardened and end-to-end validated. 64 unit tests passing. MiMo 2.5 dip classification live — scores and MYR position sizes produced in beta run (MCD: 72/100 MYR 25k, MDT: 48.6/100 MYR 15k). EDGAR XBRL extraction fixed for companies that switched revenue/dividend reporting tags (V, ACN, MSFT, DUK dividend path).
 
 ## End Portfolio Goal
 
@@ -208,7 +208,7 @@ MiMo 2.5 always outputs into a **schema-validated JSON envelope**. If output fai
 |---|---|
 | Backend | FastAPI (Python 3.14) |
 | Database | PostgreSQL + SQLAlchemy |
-| Document parsing | EDGAR XBRL API + 10-K/10-Q full-text extraction |
+| Document parsing | EDGAR XBRL API (staleness-aware tag selection) + 10-K/10-Q full-text extraction |
 | LLM | MiMo 2.5 API (`mimo-v2.5-pro`, MoE 500B, thinking effort) |
 | MCP servers | 6 domain servers (Python, FastMCP) |
 | Price data | yfinance (US + `.KL` MY tickers) |
@@ -261,8 +261,8 @@ PYTHONPATH=src python -m pytest tests/ -v
 |---|---|---|
 | 1 | Core pipeline: EDGAR ingest → XBRL metrics → dip trigger → KIV lifecycle | ✅ Complete |
 | 2 | Production hardening: config-driven thresholds, typed exceptions, no stubs, 64 tests | ✅ Complete |
-| 3 | End-to-end live run: MiMo 2.5 dip classification → full scoring → MYR position sizing | 🔜 Next |
-| 4 | Forward-return validation: score bucket hit rates against 30/90/180/365d returns | 🔜 After Phase 3 |
+| 3 | End-to-end live run: MiMo 2.5 dip classification → full scoring → MYR position sizing | ✅ Complete |
+| 4 | Forward-return validation: score bucket hit rates against 30/90/180/365d returns | 🔜 Next |
 | 5 | Malaysian stocks: Bursa scraper hardening + MYR-native scoring | 🔜 Parallel track |
 | 6 | Broker MCP — pre-filled order generation for manual execution | 📋 Backlog |
 
@@ -272,7 +272,9 @@ PYTHONPATH=src python -m pytest tests/ -v
 
 | ID | Gap | Status |
 |---|---|---|
-| A | MiMo 2.5 few-shot grounding dataset — labeled dip classification examples not built | Required before Phase 3 calibration |
-| B | Forward-return validation minimum hit rate — acceptable threshold not yet defined | Define at first backtest run |
-| C | Malaysian sector peer basket — Bursa sector indices less reliable than US ETFs | V1 known limitation, documented |
-| E | Bursa data contract — `.KL` scraper is fragile; fields/freshness not hardened | Needs dedicated hardening pass |
+| A | MiMo 2.5 few-shot grounding dataset — labeled dip classification examples not built | ✅ Resolved — 3 inline examples (TRANSIENT, STRUCTURAL, CYCLICAL_IDIOSYNCRATIC) added to `analyze_dip` prompt in `mimo.py` |
+| B | Forward-return validation minimum hit rate — acceptable threshold not yet defined | ✅ Resolved — `min_return_threshold_90d` (5%) and `min_return_threshold_180d` (8%) added to `BacktestCfg`; `calibration_report_csv` defaults to these values when `threshold` is not supplied |
+| C | Malaysian sector peer basket — Bursa sector indices less reliable than US ETFs | ✅ Resolved — `sector_override_eligible` now set to `True` when Bursa reports a sector, enabling peer-basket overrides where data is available |
+| E | Bursa data contract — `.KL` scraper is fragile; fields/freshness not hardened | ✅ Resolved — `last_fetched_utc` ISO-8601 timestamp added to `BursaStockData` and `BursaFinancials`; quality grading upgraded to require market_cap + div_yield + sector for `FULL` |
+| F | EDGAR iXBRL filing text extraction — large companies (MSFT, ACN, ABT, VZ) file inline XBRL where the `primaryDocument` is an index page, not the 10-K body. Sections are empty and MiMo is skipped. Requires index traversal to find the actual `.htm` document. | ✅ Resolved — `_clean_html` now strips `<head>` and `<ix:header>` blocks before extraction; `_find_body_document_via_index` fallback added to `get_filing_sections` for the case where primary doc still yields no sections |
+| G | Regulated utility FCF screen — utilities (DUK, NEE) have structurally negative FCF due to regulated capex. The `min_fcf_positive_years` check excludes them. V1 limitation — a regulated-utility carve-out requires a separate scoring path. | ✅ Resolved — `sic_code` field added to `XBRLMetrics`; `get_sic()` populates it from EDGAR submissions; `stage01.py` detects SIC 4900-4999 and applies `min_fcf_positive_years_utility` (default 1) instead of the standard 3-year threshold |

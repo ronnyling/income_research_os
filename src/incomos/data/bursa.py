@@ -20,6 +20,7 @@ No conversion needed.  US stocks are handled separately in edgar.py + market.py.
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 
 import pandas as pd
 import yfinance as yf
@@ -49,10 +50,12 @@ class BursaStockData(BaseModel):
     dividend_yield_pct: float | None = None
     pe_ratio: float | None = None
     sector: str | None = None
-    # V1 hard rule — Malaysian sector peer comparison is not reliable
+    # Gap C: sector_override_eligible is True when yfinance provides a sector.
+    # Callers may then use the corresponding US sector ETF as a peer-breadth proxy.
     sector_override_eligible: bool = False
     data_quality: str = "PARTIAL"          # FULL | PARTIAL | INSUFFICIENT
     data_source: str = "yfinance_kl"
+    last_fetched_utc: str = ""             # ISO-8601 UTC timestamp of this fetch
 
 
 class BursaFinancials(BaseModel):
@@ -72,6 +75,7 @@ class BursaFinancials(BaseModel):
     dps_declared: float | None = None
     data_quality: str = "PARTIAL"
     data_source: str = "yfinance_kl"
+    last_fetched_utc: str = ""             # ISO-8601 UTC timestamp of this fetch
 
 
 # ---------------------------------------------------------------------------
@@ -152,8 +156,15 @@ def get_bursa_stock(stock_code: str) -> BursaStockData | None:
             if avg_vol and avg_vol > 0:
                 volume_ratio = round(float(hist["Volume"].iloc[-1]) / float(avg_vol), 2)
 
-        # Data quality: FULL only if we have mktcap + div yield
-        quality = "FULL" if (info.get("marketCap") and info.get("trailingAnnualDividendYield")) else "PARTIAL"
+        # Data quality grading:
+        # FULL    = price + div yield + market cap + sector all present
+        # PARTIAL = price present but at least one of the above missing
+        # INSUFFICIENT = would be returned as None before this point
+        has_core = bool(info.get("marketCap") and info.get("trailingAnnualDividendYield"))
+        has_sector = bool(info.get("sector"))
+        quality = "FULL" if (has_core and has_sector) else "PARTIAL"
+
+        now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         return BursaStockData(
             stock_code=stock_code,
@@ -173,8 +184,11 @@ def get_bursa_stock(stock_code: str) -> BursaStockData | None:
             ),
             pe_ratio=float(info["trailingPE"]) if info.get("trailingPE") else None,
             sector=info.get("sector"),
-            sector_override_eligible=False,  # V1 hard rule
+            # Gap C: sector_override_eligible when sector is available.
+            # Callers can use the US sector ETF as a peer-breadth proxy.
+            sector_override_eligible=has_sector,
             data_quality=quality,
+            last_fetched_utc=now_utc,
         )
 
     except Exception as exc:
@@ -228,6 +242,7 @@ def get_bursa_financials(stock_code: str, years: int = 5) -> list[BursaFinancial
                 capex_myr=abs(capex_raw) if capex_raw is not None else None,
                 dividends_paid_myr=abs(div_raw) if div_raw is not None else None,
                 data_quality="PARTIAL",
+                last_fetched_utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             ))
 
     except Exception as exc:
