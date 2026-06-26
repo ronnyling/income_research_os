@@ -86,9 +86,13 @@ _XBRL_TAG_MAP: dict[str, list[str]] = {
         "DividendsCommonStockPerShareCashPaid",
     ],
     "total_debt": [
+        # These are additive components — the extraction logic sums all found values.
+        # LongTermDebtNoncurrent + DebtCurrent = total debt.
+        # If only one tag is found, it's used as-is (partial data is better than none).
         "LongTermDebtNoncurrent",
         "LongTermDebt",
         "DebtCurrent",
+        "ShortTermBorrowings",
     ],
     "cash": [
         "CashAndCashEquivalentsAtCarryingValue",
@@ -97,6 +101,10 @@ _XBRL_TAG_MAP: dict[str, list[str]] = {
     "equity": [
         "StockholdersEquity",
         "StockholdersEquityAttributableToParent",
+    ],
+    "earnings_per_share": [
+        "EarningsPerShareBasic",
+        "EarningsPerShareDiluted",
     ],
 }
 
@@ -293,6 +301,66 @@ class EdgarClient:
         logger.debug("  %s -> no matching XBRL tag found (tried: %s)", metric, tags)
         return []
 
+    def _extract_debt_components(
+        self,
+        facts: dict[str, Any],
+    ) -> list[tuple[int, float]]:
+        """Extract total debt by summing all available debt component tags.
+
+        Unlike _extract_annual_series which takes the first hit, this method
+        sums LongTermDebtNoncurrent + DebtCurrent + ShortTermBorrowings per fiscal year.
+        This handles companies that report long-term and short-term debt under separate tags.
+        """
+        tags = _XBRL_TAG_MAP.get("total_debt", [])
+        gaap = facts.get("facts", {}).get("us-gaap", {})
+        staleness_cutoff = date.today().year - 3
+
+        # Collect per-tag annual series
+        tag_series: dict[str, dict[int, float]] = {}
+        for tag in tags:
+            tag_data = gaap.get(tag)
+            if not tag_data:
+                continue
+            units = tag_data.get("units", {})
+            entries = units.get("USD", [])
+            if not entries:
+                continue
+            annual = [
+                e for e in entries
+                if e.get("fp") == "FY" and e.get("form") in ("10-K", "10-K/A")
+            ]
+            by_year: dict[int, dict] = {}
+            for e in annual:
+                fy = e.get("fy")
+                if fy is None:
+                    continue
+                existing = by_year.get(fy)
+                if existing is None or e.get("filed", "") > existing.get("filed", ""):
+                    by_year[fy] = e
+            if by_year:
+                tag_series[tag] = {fy: entry["val"] for fy, entry in by_year.items()}
+
+        if not tag_series:
+            return []
+
+        # Sum all tags per fiscal year
+        all_years: set[int] = set()
+        for ts in tag_series.values():
+            all_years.update(ts.keys())
+
+        result: list[tuple[int, float]] = []
+        for fy in sorted(all_years):
+            total = sum(ts.get(fy, 0) for ts in tag_series.values())
+            result.append((fy, total))
+
+        # Check staleness
+        if result and result[-1][0] >= staleness_cutoff:
+            logger.debug("  total_debt -> summed %d components: %d annual entries", len(tag_series), len(result))
+        else:
+            logger.debug("  total_debt -> stale or no data")
+
+        return result
+
     def get_annual_metrics(
         self,
         ticker: str,
@@ -311,9 +379,14 @@ class EdgarClient:
         sic_code = self.get_sic(cik)
 
         # Extract all series
+        # Special case: total_debt tags are additive components (long-term + short-term),
+        # not alternatives. Sum all available tags per fiscal year.
         series: dict[str, list[tuple[int, float]]] = {}
         for metric in _XBRL_TAG_MAP:
-            series[metric] = self._extract_annual_series(facts, metric)
+            if metric == "total_debt":
+                series[metric] = self._extract_debt_components(facts)
+            else:
+                series[metric] = self._extract_annual_series(facts, metric)
 
         # Determine the set of fiscal years we have data for (union across all metrics)
         all_years: set[int] = set()
@@ -357,6 +430,7 @@ class EdgarClient:
                 total_debt=_get("total_debt"),
                 cash=_get("cash"),
                 equity=_get("equity"),
+                earnings_per_share=_get("earnings_per_share"),
             )
             result.append(m)
 

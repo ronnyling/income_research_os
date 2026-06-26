@@ -12,7 +12,7 @@ delimiter convention (env_nested_delimiter = "__"):
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,12 +21,74 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 # ═══════════════════════════════════════════════════════════════════════════
 
 class DipTriggerCfg(BaseModel):
-    """Stage 1→2 dip trigger thresholds."""
+    """Stage 1→2 dip trigger thresholds (legacy — prefer EntryAttractivenessCfg)."""
     threshold_soft: float = Field(default=0.08, ge=0.01, le=0.50)
     threshold_hard: float = Field(default=0.15, ge=0.01, le=0.75)
     rsi_soft: float = Field(default=50.0, ge=1.0, le=100.0)
     rsi_hard: float = Field(default=40.0, ge=1.0, le=99.0)
     volume_elevated: float = Field(default=1.3, ge=0.5, le=10.0)
+
+
+class EntryAttractivenessCfg(BaseModel):
+    """Stage 1→2 entry attractiveness scoring weights and thresholds.
+
+    Replaces the binary dip trigger with a continuous 0-100 score.
+    Stocks are ranked by this score and the top N are promoted to KIV
+    (where N = kiv_target_size in Settings).
+    """
+    # Component weights (must sum to 1.0)
+    weight_drawdown: float = Field(default=0.30, ge=0.0, le=1.0,
+        description="Weight for price drawdown from 52W high")
+    weight_yield_expansion: float = Field(default=0.25, ge=0.0, le=1.0,
+        description="Weight for current yield vs historical average")
+    weight_dividend_growth: float = Field(default=0.20, ge=0.0, le=1.0,
+        description="Weight for DPS CAGR trajectory")
+    weight_valuation: float = Field(default=0.15, ge=0.0, le=1.0,
+        description="Weight for earnings yield / value signal")
+    weight_trend: float = Field(default=0.10, ge=0.0, le=1.0,
+        description="Weight for price trend (TRENDING_DOWN bonus)")
+
+    # Minimum floor — don't promote stocks below this even to fill target count
+    min_attractiveness_score: float = Field(default=20.0, ge=0.0, le=100.0)
+
+    # Yield expansion: how much above historical average counts as attractive
+    yield_expansion_min_ratio: float = Field(default=1.10, ge=1.0, le=3.0,
+        description="Current yield / 5yr avg yield must be >= this to score (1.10 = 10% above avg)")
+
+    # Dividend growth floor — DPS must have grown at least this much over 3yr
+    div_growth_min_cagr: float = Field(default=0.0, le=0.50,
+        description="Minimum DPS CAGR to score on dividend growth (0.0 = any positive growth)")
+
+    # Drawdown scoring breakpoints (configurable shape)
+    drawdown_t1: float = Field(default=0.02, ge=0.0, le=0.50,
+        description="Drawdown threshold for minimal score")
+    drawdown_t2: float = Field(default=0.05, ge=0.0, le=0.50)
+    drawdown_t3: float = Field(default=0.10, ge=0.0, le=0.50)
+    drawdown_t4: float = Field(default=0.15, ge=0.0, le=0.50)
+    drawdown_t5: float = Field(default=0.20, ge=0.0, le=0.50)
+    drawdown_t6: float = Field(default=0.30, ge=0.0, le=0.50)
+    drawdown_t7: float = Field(default=0.40, ge=0.0, le=0.50)
+
+    @model_validator(mode="after")
+    def _check_sum(self) -> "EntryAttractivenessCfg":
+        total = (
+            self.weight_drawdown + self.weight_yield_expansion
+            + self.weight_dividend_growth + self.weight_valuation
+            + self.weight_trend
+        )
+        if abs(total - 1.0) > 0.001:
+            raise ValueError(
+                f"EntryAttractiveness weights must sum to 1.0, got {total:.3f}"
+            )
+        return self
+
+
+class KivCfg(BaseModel):
+    """KIV basket management settings."""
+    target_size: int = Field(default=20, ge=5, le=500,
+        description="Target number of stocks in the KIV basket")
+    hysteresis_days: int = Field(default=14, ge=1, le=90,
+        description="Days a stock stays in KIV before eligible for demotion by score drop")
 
 
 class ScoringWeightsCfg(BaseModel):
@@ -35,6 +97,17 @@ class ScoringWeightsCfg(BaseModel):
     business: float = Field(default=0.30, ge=0.0, le=1.0)
     dip: float = Field(default=0.30, ge=0.0, le=1.0)
     oversold: float = Field(default=0.10, ge=0.0, le=1.0)
+
+    @model_validator(mode="after")
+    def _check_sum(self) -> "ScoringWeightsCfg":
+        total = self.income + self.business + self.dip + self.oversold
+        if abs(total - 1.0) > 0.001:
+            raise ValueError(
+                f"ScoringWeights must sum to 1.0, got {total:.3f} "
+                f"(income={self.income}, business={self.business}, "
+                f"dip={self.dip}, oversold={self.oversold})"
+            )
+        return self
 
 
 class ScoreMultiplierCfg(BaseModel):
@@ -82,6 +155,13 @@ class BusinessQualityCfg(BaseModel):
     margin_t3_min: float = Field(default=0.08); margin_t3_pts: float = Field(default=15.0)
     margin_t4_min: float = Field(default=0.03); margin_t4_pts: float = Field(default=10.0)
     margin_t5_min: float = Field(default=0.00); margin_t5_pts: float = Field(default=5.0)
+    # FCF CAGR — higher is better — scores 0 if missing
+    # FCF CAGR is more volatile than Revenue CAGR, so thresholds are lower.
+    fcf_cagr_t1_min: float = Field(default=0.15); fcf_cagr_t1_pts: float = Field(default=25.0)
+    fcf_cagr_t2_min: float = Field(default=0.10); fcf_cagr_t2_pts: float = Field(default=22.0)
+    fcf_cagr_t3_min: float = Field(default=0.05); fcf_cagr_t3_pts: float = Field(default=18.0)
+    fcf_cagr_t4_min: float = Field(default=0.00); fcf_cagr_t4_pts: float = Field(default=12.0)
+    fcf_cagr_floor_pts: float = Field(default=2.0)
     # Net debt trend
     net_debt_stable_pct: float = Field(default=0.15)
     net_debt_improve_pts: float = Field(default=25.0)
@@ -147,6 +227,18 @@ class MacroCfg(BaseModel):
 
     def block_fin_set(self) -> set[str]:
         return {s.strip() for s in self.block_fin_states.split(",") if s.strip()}
+
+
+class MimoBatchCfg(BaseModel):
+    """MiMo batch processing and caching settings."""
+    batch_size: int = Field(default=5, ge=1, le=50,
+        description="Number of stocks per single MiMo API call in batch mode")
+    max_concurrent_batches: int = Field(default=2, ge=1, le=10,
+        description="Max parallel MiMo API calls (higher = faster but may hit rate limits)")
+    ttl_days: int = Field(default=90, ge=1, le=365,
+        description="Days to cache MiMo classifications (reused until filing text changes)")
+    max_chars_per_stock: int = Field(default=2000, ge=500, le=5000,
+        description="Max characters per filing section (MD&A, risk factors) in batch prompt")
 
 
 class FilingCfg(BaseModel):
@@ -224,6 +316,8 @@ class Settings(BaseSettings):
 
     # ── Threshold sub-models ─────────────────────────────────────────────
     dip_trigger: DipTriggerCfg = Field(default_factory=DipTriggerCfg)
+    entry_attractiveness: EntryAttractivenessCfg = Field(default_factory=EntryAttractivenessCfg)
+    kiv: KivCfg = Field(default_factory=KivCfg)
     scoring_weights: ScoringWeightsCfg = Field(default_factory=ScoringWeightsCfg)
     score_multiplier: ScoreMultiplierCfg = Field(default_factory=ScoreMultiplierCfg)
     sizing: SizingCfg = Field(default_factory=SizingCfg)
@@ -232,6 +326,7 @@ class Settings(BaseSettings):
     oversold_q: OversoldQualityCfg = Field(default_factory=OversoldQualityCfg)
     dip_q: DipQualityCfg = Field(default_factory=DipQualityCfg)
     macro: MacroCfg = Field(default_factory=MacroCfg)
+    mimo_batch: MimoBatchCfg = Field(default_factory=MimoBatchCfg)
     filing: FilingCfg = Field(default_factory=FilingCfg)
     backtest: BacktestCfg = Field(default_factory=BacktestCfg)
 

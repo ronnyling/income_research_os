@@ -270,11 +270,18 @@ def update_refresh_timestamp(
 
 
 def save_screen_result(conn: Connection, result: ScreenResult) -> None:
-    stmt = insert(screen_results).values(
+    stmt = _dialect_insert(conn, screen_results).values(
         ticker=result.ticker,
         passed=result.passed,
         checks=result.checks,
         notes=result.notes,
+    ).on_conflict_do_update(
+        index_elements=["ticker"],
+        set_={
+            "passed": result.passed,
+            "checks": result.checks,
+            "notes": result.notes,
+        },
     )
     conn.execute(stmt)
 
@@ -288,8 +295,9 @@ def save_opportunity_score(conn: Connection, ticker: str, score_dict: dict) -> N
 
     score_dict must include: composite, income_quality, business_quality,
     dip_quality, oversold_confidence, base_size_multiplier.
+    Uses upsert to avoid duplicate rows on repeated scoring runs.
     """
-    stmt = insert(opportunity_scores).values(
+    stmt = _dialect_insert(conn, opportunity_scores).values(
         ticker=ticker,
         income_quality=float(score_dict["income_quality"]),
         business_quality=float(score_dict["business_quality"]),
@@ -297,6 +305,16 @@ def save_opportunity_score(conn: Connection, ticker: str, score_dict: dict) -> N
         oversold_confidence=float(score_dict["oversold_confidence"]),
         composite=float(score_dict["composite"]),
         base_size_multiplier=float(score_dict.get("base_size_multiplier", 1.0)),
+    ).on_conflict_do_update(
+        index_elements=["ticker"],
+        set_={
+            "income_quality": float(score_dict["income_quality"]),
+            "business_quality": float(score_dict["business_quality"]),
+            "dip_quality": float(score_dict["dip_quality"]),
+            "oversold_confidence": float(score_dict["oversold_confidence"]),
+            "composite": float(score_dict["composite"]),
+            "base_size_multiplier": float(score_dict.get("base_size_multiplier", 1.0)),
+        },
     )
     conn.execute(stmt)
 
@@ -359,8 +377,162 @@ def get_refresh_timestamp(
 
 
 # ------------------------------------------------------------------
-# Annotations (stored in filing_memos as memo_type="ANNOTATION")
+# MiMo classification cache (stored in filing_memos)
 # ------------------------------------------------------------------
+
+
+def save_mimo_classification(
+    conn: Connection,
+    ticker: str,
+    result: dict,
+    filing_hash: str,
+    ttl_days: int = 90,
+) -> None:
+    """Cache a validated MiMo dip classification.
+
+    Stores the result in filing_memos with memo_type="DIP_ANALYSIS".
+    The filing_hash is embedded in the content JSON so the caller can
+    detect when the filing text has changed (and re-classify).
+
+    ttl_days controls how long the cached result is considered fresh.
+    Architecture rule: failed refresh must NOT update the cache.
+    """
+    from datetime import timedelta
+    now = datetime.now(timezone.utc)
+    content = {
+        "result": result,
+        "filing_hash": filing_hash,
+        "cached_at": now.isoformat(),
+    }
+    stmt = (
+        _dialect_insert(conn, filing_memos)
+        .values(
+            ticker=ticker,
+            memo_type="DIP_ANALYSIS",
+            content=content,
+            validated=True,
+            created_at=now,
+            valid_until=now + timedelta(days=ttl_days),
+        )
+        .on_conflict_do_update(
+            index_elements=["ticker", "memo_type"],
+            set_={
+                "content": content,
+                "validated": True,
+                "created_at": now,
+                "valid_until": now + timedelta(days=ttl_days),
+            },
+        )
+    )
+    conn.execute(stmt)
+    logger.debug("Cached MiMo classification for %s (hash=%s, ttl=%dd)", ticker, filing_hash, ttl_days)
+
+
+def get_cached_mimo_classification(
+    conn: Connection,
+    ticker: str,
+    filing_hash: str,
+) -> dict | None:
+    """Retrieve a cached MiMo classification if it exists AND the filing hasn't changed.
+
+    Returns the cached result dict if:
+      1. A DIP_ANALYSIS memo exists for this ticker
+      2. The memo hasn't expired (valid_until > now)
+      3. The filing_hash matches (filing text hasn't changed)
+
+    Returns None if any condition fails — caller should re-classify.
+    """
+    now = datetime.now(timezone.utc)
+    stmt = (
+        select(filing_memos.c.content, filing_memos.c.valid_until)
+        .where(
+            (filing_memos.c.ticker == ticker)
+            & (filing_memos.c.memo_type == "DIP_ANALYSIS")
+        )
+        .limit(1)
+    )
+    row = conn.execute(stmt).fetchone()
+    if row is None:
+        return None
+
+    content = row.content
+    valid_until = row.valid_until
+
+    # Check TTL
+    if valid_until and valid_until < now:
+        logger.debug("Cached MiMo classification for %s expired (%s)", ticker, valid_until)
+        return None
+
+    # Check filing hash — if filing text changed, cache is stale
+    cached_hash = content.get("filing_hash") if isinstance(content, dict) else None
+    if cached_hash != filing_hash:
+        logger.debug("Cached MiMo classification for %s: filing hash mismatch (cached=%s, current=%s)",
+                      ticker, cached_hash, filing_hash)
+        return None
+
+    result = content.get("result") if isinstance(content, dict) else None
+    if result:
+        logger.debug("Cache hit: MiMo classification for %s", ticker)
+    return result
+
+
+def get_cached_mimo_batch(
+    conn: Connection,
+    ticker_hashes: dict[str, str],
+) -> tuple[dict[str, dict], list[str]]:
+    """Retrieve cached MiMo classifications for multiple tickers at once.
+
+    Args:
+        ticker_hashes: Dict mapping ticker -> filing_hash
+
+    Returns:
+        Tuple of (cached_results, uncached_tickers):
+        - cached_results: Dict mapping ticker -> cached result dict
+        - uncached_tickers: List of tickers that need re-classification
+    """
+    now = datetime.now(timezone.utc)
+    tickers = list(ticker_hashes.keys())
+    if not tickers:
+        return {}, []
+
+    stmt = (
+        select(
+            filing_memos.c.ticker,
+            filing_memos.c.content,
+            filing_memos.c.valid_until,
+        )
+        .where(
+            (filing_memos.c.ticker.in_(tickers))
+            & (filing_memos.c.memo_type == "DIP_ANALYSIS")
+        )
+    )
+    rows = conn.execute(stmt).fetchall()
+
+    cached: dict[str, dict] = {}
+    seen_tickers: set[str] = set()
+
+    for row in rows:
+        t = row.ticker
+        seen_tickers.add(t)
+        content = row.content
+        valid_until = row.valid_until
+
+        # Check TTL
+        if valid_until and valid_until < now:
+            continue
+
+        # Check filing hash
+        cached_hash = content.get("filing_hash") if isinstance(content, dict) else None
+        if cached_hash != ticker_hashes.get(t):
+            continue
+
+        result = content.get("result") if isinstance(content, dict) else None
+        if result:
+            cached[t] = result
+
+    uncached = [t for t in tickers if t not in cached]
+    logger.info("MiMo cache: %d hits, %d misses (of %d requested)", len(cached), len(uncached), len(tickers))
+    return cached, uncached
 
 def save_annotation(
     conn: Connection,
@@ -373,10 +545,20 @@ def save_annotation(
     Stored in filing_memos with memo_type="ANNOTATION".
     Annotations can increase position size up to 1.5× base (architecture rule).
     """
-    stmt = insert(filing_memos).values(
-        ticker=ticker,
-        memo_type="ANNOTATION",
-        content={"annotation": annotation, "analyst": analyst},
-        validated=True,
+    stmt = (
+        _dialect_insert(conn, filing_memos)
+        .values(
+            ticker=ticker,
+            memo_type="ANNOTATION",
+            content={"annotation": annotation, "analyst": analyst},
+            validated=True,
+        )
+        .on_conflict_do_update(
+            index_elements=["ticker", "memo_type"],
+            set_={
+                "content": {"annotation": annotation, "analyst": analyst},
+                "validated": True,
+            },
+        )
     )
     conn.execute(stmt)

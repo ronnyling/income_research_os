@@ -90,11 +90,11 @@ def compute_business_quality(metrics: list[XBRLMetrics]) -> tuple[float, dict]:
         years = e_yr - s_yr or 1
         fcf_cagr = _cagr(s_fcf, e_fcf, years)
         if fcf_cagr is not None:
-            if fcf_cagr > cfg.rev_t1_min:   fcf_pts = cfg.rev_t1_pts
-            elif fcf_cagr > cfg.rev_t2_min: fcf_pts = cfg.rev_t2_pts
-            elif fcf_cagr > cfg.rev_t3_min: fcf_pts = cfg.rev_t3_pts
-            elif fcf_cagr > cfg.rev_t4_min: fcf_pts = cfg.rev_t4_pts
-            else:                           fcf_pts = cfg.rev_floor_pts
+            if fcf_cagr > cfg.fcf_cagr_t1_min:   fcf_pts = cfg.fcf_cagr_t1_pts
+            elif fcf_cagr > cfg.fcf_cagr_t2_min: fcf_pts = cfg.fcf_cagr_t2_pts
+            elif fcf_cagr > cfg.fcf_cagr_t3_min: fcf_pts = cfg.fcf_cagr_t3_pts
+            elif fcf_cagr > cfg.fcf_cagr_t4_min: fcf_pts = cfg.fcf_cagr_t4_pts
+            else:                                fcf_pts = cfg.fcf_cagr_floor_pts
             breakdown["fcf_cagr"] = {"cagr": round(fcf_cagr, 4), "pts": fcf_pts}
         else:
             fcf_pts = 0.0
@@ -130,9 +130,3 @@ def compute_business_quality(metrics: list[XBRLMetrics]) -> tuple[float, dict]:
     final = round(min(100, score), 1)
     breakdown["total"] = final
     return final, breakdown
-
-
-def _cagr(start: float, end: float, years: int) -> float | None:
-    if start is None or end is None or years <= 0 or start <= 0:
-        return None
-    return (end / start) ** (1 / years) - 1

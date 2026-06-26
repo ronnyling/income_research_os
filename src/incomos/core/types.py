@@ -163,6 +163,7 @@ class XBRLMetrics(BaseModel):
     total_debt: float | None = None
     cash: float | None = None
     equity: float | None = None
+    earnings_per_share: float | None = None  # Basic EPS from XBRL
 
     @computed_field
     @property

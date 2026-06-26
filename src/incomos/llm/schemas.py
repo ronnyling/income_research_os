@@ -37,7 +37,7 @@ class DipAnalysisOutput(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
     evidence_summary: str = Field(min_length=10, max_length=2000)
     key_risks: list[str] = Field(default_factory=list)
-    transience_argument: str = Field(default="")  # why dip is temporary
+    transience_argument: str = Field(min_length=5, max_length=2000)  # why dip is temporary
     structural_flags: list[str] = Field(default_factory=list)  # any structural concerns
 
     @field_validator("classification")

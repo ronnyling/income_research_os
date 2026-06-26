@@ -114,11 +114,12 @@ filing_memos = Table(
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("ticker", String(20), nullable=False),
-    Column("memo_type", String(50), nullable=False),        # XBRL_METRICS | DIP_ANALYSIS | etc.
+    Column("memo_type", String(50), nullable=False),        # XBRL_METRICS | DIP_ANALYSIS | ANNOTATION | etc.
     Column("content", JSON, nullable=False),
     Column("validated", Boolean, nullable=False, server_default=text("FALSE")),
     Column("created_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
     Column("valid_until", DateTime(timezone=True), nullable=True),
+    UniqueConstraint("ticker", "memo_type", name="uq_filing_memos_ticker_type"),
 )
 
 opportunity_scores = Table(

@@ -79,11 +79,21 @@ def check_dip_trigger(snap: PriceSnapshot) -> DipTriggerResult:
             vol_score = 1
             signals.append(f"Volume ratio {vr:.2f}x (≥{cfg.volume_elevated:.1f}x elevated)")
 
-    total = price_score + rsi_score + vol_score
+    # Price trend signal: TRENDING_DOWN adds a point even when RSI isn't exhausted.
+    # Dividend/value stocks often have higher RSI floors during pullbacks —
+    # the trend signal catches them without loosening the RSI gate for all stocks.
+    trend_score = 0
+    if snap.price_trend == "TRENDING_DOWN":
+        trend_score = 1
+        signals.append(f"Price trend: TRENDING_DOWN")
+
+    total = price_score + rsi_score + vol_score + trend_score
 
     if price_score == 2 and rsi_score >= 1:
         strength = "STRONG"
     elif price_score >= 1 and rsi_score >= 1:
+        strength = "MODERATE"
+    elif price_score >= 1 and trend_score >= 1:
         strength = "MODERATE"
     elif price_score >= 1:
         strength = "WEAK"

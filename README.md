@@ -2,7 +2,7 @@
 
 A funnel-based, agentic investment research platform that surfaces quality income stocks at dip entry points — not a trading bot, a decision-support system with human-in-the-loop confirmation.
 
-**Current status:** Core pipeline production-hardened and end-to-end validated. 64 unit tests passing. MiMo 2.5 dip classification live — scores and MYR position sizes produced in beta run (MCD: 72/100 MYR 25k, MDT: 48.6/100 MYR 15k). EDGAR XBRL extraction fixed for companies that switched revenue/dividend reporting tags (V, ACN, MSFT, DUK dividend path).
+**Current status:** Core pipeline production-hardened and end-to-end validated. 114 unit tests passing. Stage 1→2 redesigned from binary dip trigger to continuous Entry Attractiveness scoring (0-100) with 5 dimensions: drawdown, yield expansion, dividend growth, valuation, trend. Stocks ranked and tagged — no more arbitrary 8% threshold. Expanded universe: 197 US dividend stocks (110 Aristocrats + 25 Kings + 81 Quality), plus live NOBL ETF holdings via `--tier nobl`. KIV basket fills to target count (default 50) with configurable minimum floor. MiMo 2.5 dip classification operates in **batch mode** — processes multiple stocks per API call (default 10 per chunk) instead of N individual calls. Classifications are **cached with filing-hash TTL** (default 90 days) — no redundant API calls when filings haven't changed. Corrective retry on schema validation failure. 5 few-shot examples in prompt.
 
 ## End Portfolio Goal
 
@@ -18,21 +18,27 @@ The system does not chase yield. It finds **durable cash-generating businesses**
 
 Stocks pass through progressively expensive gates. MiMo 2.5 (MoE 500B, thinking effort) is only invoked at Stage 2+ — never on the full universe.
 
-```
-ALL STOCKS  (US: EDGAR universe | MY: Bursa scraper / community data)
+````
+ALL STOCKS  (US: EDGAR universe 197 stocks | MY: Bursa scraper / community data)
       │
       │  Stage 0 → 1: Quick Quantitative Screen   [rule-based MCP, near-zero cost]
       │  Checks: FCF+, dividend history, payout ratio, min market cap, positive ROIC
       │  Runs: on startup if last_refresh > 7 days
       ▼
-PROSPECTS POOL  (~200–600 stocks)
+PROSPECTS POOL  (~100–150 stocks from 197 universe)
       │
-      │  Stage 1 → 2: Dip Trigger Screen   [rule-based price + volume, near-zero cost]
-      │  Checks: % drawdown from 52W high, RSI below threshold, abnormal sell volume,
-      │          any recent 8-K / Bursa announcement filed?
-      │  Runs: on startup if last_refresh > 1 day
+      │  Stage 1 → 2: Entry Attractiveness Ranking   [rule-based, near-zero cost]
+      │  Continuous 0-100 score combining:
+      │    - Price drawdown from 52W high (30%)
+      │    - Yield expansion vs 5yr average (25%)
+      │    - Dividend growth trajectory (20%)
+      │    - Valuation / FCF quality (15%)
+      │    - Price trend momentum (10%)
+      │  Stocks ranked by score, tagged (DEEP_DIP, YIELD_EXPANSION, DIVIDEND_GROWTH,
+      │    UNDERVALUED, TRENDING_DOWN), top N promoted to KIV (target = 50)
+      │  Minimum attractiveness floor prevents promoting garbage in bull markets
       ▼
-KIV BASKET  (~30–80 stocks)   ← under continuous watch
+KIV BASKET  (target 50 stocks)   ← under continuous watch
       │     daily: price + technicals
       │     weekly: new filing scan
       │     TTL: 90 days max → Dormant if no trigger
@@ -68,7 +74,7 @@ FINALISTS  (~3–10 stocks)
       │  Stage 4 → Decision: human review + annotation + position sizing
       ▼
 DECISION QUEUE  →  Buy / Hold / Reject with conviction memo (MYR-sized)
-```
+````
 
 ---
 
@@ -78,7 +84,7 @@ KIV is not a waiting room. It is an active watch list with explicit lifecycle ru
 
 | Transition | Direction | Trigger |
 |---|---|---|
-| Prospects → KIV | Promote | Dip trigger fires |
+| Prospects → KIV | Promote | Entry Attractiveness score meets floor, ranked in top N (target 50) |
 | KIV → Candidate | Promote | Secondary signal confirmed + context check passes |
 | KIV → Dormant | Demote | TTL 90 days, no trigger — revisit monthly |
 | KIV → Rejected | Demote | Material negative event, dividend cut, FCF turns negative, dividend suspended |
@@ -115,6 +121,21 @@ Default weights: Income 0.30 · Business 0.30 · Dip 0.30 · Oversold 0.10.
 
 All four inputs are **required**. There are no stub scores or neutral fallbacks — missing data raises a typed exception.
 
+### Entry Attractiveness Score (Stage 1→2)
+
+Replaces the binary dip trigger with a continuous 0-100 score that identifies the best entry opportunities across ALL quality-screened prospects:
+
+$$\text{EA Score} = 0.30 \cdot \text{Drawdown} + 0.25 \cdot \text{Yield Expansion} + 0.20 \cdot \text{Div Growth} + 0.15 \cdot \text{Valuation} + 0.10 \cdot \text{Trend}$$
+
+Each stock is tagged with the criteria it scored highest on:
+- **DEEP_DIP** — 15%+ below 52W high
+- **YIELD_EXPANSION** — current yield >10% above 5yr average
+- **DIVIDEND_GROWTH** — positive DPS CAGR
+- **UNDERVALUED** — high FCF margin + revenue growth
+- **TRENDING_DOWN** — confirmed downtrend (below both SMAs)
+
+Stocks are ranked by EA score, top N promoted to KIV (target count configurable, default 50). Minimum floor prevents promoting stocks below a quality threshold in bull markets.
+
 ### Position sizing (yield-aware)
 
 - Max income contribution per stock: `SIZING__MAX_INCOME_CONTRIBUTION` (default 15%)
@@ -147,12 +168,23 @@ All thresholds are in `src/incomos/core/config.py` as nested Pydantic sub-models
 DIP_TRIGGER__THRESHOLD_SOFT=0.10
 DIP_TRIGGER__THRESHOLD_HARD=0.20
 
-# Example: shift scoring weights
+# Example: shift scoring weights (must sum to 1.0 — validated at startup)
 SCORING_WEIGHTS__DIP=0.40
 SCORING_WEIGHTS__OVERSOLD=0.05
+
+# Example: adjust FCF CAGR thresholds
+BUSINESS_Q__FCF_CAGR_T1_MIN=0.20
+
+# Example: adjust drawdown breakpoints
+ENTRY_ATTRACTIVENESS__DRAWDOWN_T4=0.12
+
+# Example: MiMo batch processing (10 stocks per API call, 90-day cache TTL)
+MIMO_BATCH__BATCH_SIZE=10
+MIMO_BATCH__TTL_DAYS=90
+MIMO_BATCH__MAX_CHARS_PER_STOCK=2000
 ```
 
-Sub-models: `DipTriggerCfg` · `ScoringWeightsCfg` · `ScoreMultiplierCfg` · `SizingCfg` · `IncomeQualityCfg` · `BusinessQualityCfg` · `OversoldQualityCfg` · `DipQualityCfg` · `MacroCfg` · `FilingCfg` · `BacktestCfg`
+Sub-models: `DipTriggerCfg` · `EntryAttractivenessCfg` · `KivCfg` · `ScoringWeightsCfg` · `ScoreMultiplierCfg` · `SizingCfg` · `IncomeQualityCfg` · `BusinessQualityCfg` · `OversoldQualityCfg` · `DipQualityCfg` · `MacroCfg` · `MimoBatchCfg` · `FilingCfg` · `BacktestCfg`
 
 ---
 
@@ -198,6 +230,15 @@ Rule-based MCP tools are always attempted first. MiMo 2.5 is invoked only when:
 - Filing section requires narrative understanding (MD&A, Risk Factors, YoY language diff)
 - Dip classification requires reconciling conflicting signals
 
+MiMo 2.5 operates in **batch mode** at Stage 2→3:
+1. All filing data is gathered first (no MiMo calls yet)
+2. Cached classifications are checked (filing-hash + TTL, default 90 days)
+3. Uncached stocks are chunked into batches (default 10 per API call)
+4. Each chunk is classified in a single MiMo call
+5. Results are cached for future runs
+
+This reduces MiMo API calls from N (one per stock) to ⌈N/10⌉ — a 50-stock KIV basket uses 5 calls instead of 50. On subsequent runs, stocks whose filings haven't changed use the cache (zero MiMo calls).
+
 MiMo 2.5 always outputs into a **schema-validated JSON envelope**. If output fails schema validation, the stock is flagged for human review — never silently mis-scored.
 
 ---
@@ -214,7 +255,7 @@ MiMo 2.5 always outputs into a **schema-validated JSON envelope**. If output fai
 | Price data | yfinance (US + `.KL` MY tickers) |
 | Macro data | FRED API (free) — DGS2, DGS10, NFCI, DEXMAUS, RECPROUSM156N |
 | Config | pydantic-settings v2 with `env_nested_delimiter="__"` |
-| Tests | pytest — 64 tests, all passing |
+| Tests | pytest — 114 tests, all passing |
 
 ---
 
@@ -242,9 +283,18 @@ export MIMO_API_KEY=<your-key>          # required for Stage 3+ (dip classificat
 export FRED_API_KEY=<optional>          # FRED public endpoints work without a key
 export DATABASE_URL=postgresql://...    # required for --use-db mode
 
-# Run the funnel against the default US universe
+# Run the funnel against the full US dividend universe (197 stocks)
 cd income_research_os
 PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000
+
+# Run against a specific tier
+PYTHONPATH=src python scripts/run_funnel.py --tier aristocrats --portfolio-myr 500000
+PYTHONPATH=src python scripts/run_funnel.py --tier kings --portfolio-myr 500000
+PYTHONPATH=src python scripts/run_funnel.py --tier quality --portfolio-myr 500000
+PYTHONPATH=src python scripts/run_funnel.py --tier nobl --portfolio-myr 500000  # live NOBL ETF holdings
+
+# Run against specific tickers (overrides --tier)
+PYTHONPATH=src python scripts/run_funnel.py --tickers KO JNJ PG ACN MSFT --portfolio-myr 500000
 
 # With PostgreSQL persistence
 PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --use-db
@@ -272,9 +322,66 @@ PYTHONPATH=src python -m pytest tests/ -v
 
 | ID | Gap | Status |
 |---|---|---|
-| A | MiMo 2.5 few-shot grounding dataset — labeled dip classification examples not built | ✅ Resolved — 3 inline examples (TRANSIENT, STRUCTURAL, CYCLICAL_IDIOSYNCRATIC) added to `analyze_dip` prompt in `mimo.py` |
+| A | MiMo 2.5 few-shot grounding dataset — labeled dip classification examples not built | ✅ Resolved — 5 inline examples (TRANSIENT, STRUCTURAL, CYCLICAL_IDIOSYNCRATIC, CYCLICAL_MACRO, CYCLICAL_IDIOSYNCRATIC with segment weakness) added to `analyze_dip` prompt in `mimo.py` |
 | B | Forward-return validation minimum hit rate — acceptable threshold not yet defined | ✅ Resolved — `min_return_threshold_90d` (5%) and `min_return_threshold_180d` (8%) added to `BacktestCfg`; `calibration_report_csv` defaults to these values when `threshold` is not supplied |
 | C | Malaysian sector peer basket — Bursa sector indices less reliable than US ETFs | ✅ Resolved — `sector_override_eligible` now set to `True` when Bursa reports a sector, enabling peer-basket overrides where data is available |
 | E | Bursa data contract — `.KL` scraper is fragile; fields/freshness not hardened | ✅ Resolved — `last_fetched_utc` ISO-8601 timestamp added to `BursaStockData` and `BursaFinancials`; quality grading upgraded to require market_cap + div_yield + sector for `FULL` |
 | F | EDGAR iXBRL filing text extraction — large companies (MSFT, ACN, ABT, VZ) file inline XBRL where the `primaryDocument` is an index page, not the 10-K body. Sections are empty and MiMo is skipped. Requires index traversal to find the actual `.htm` document. | ✅ Resolved — `_clean_html` now strips `<head>` and `<ix:header>` blocks before extraction; `_find_body_document_via_index` fallback added to `get_filing_sections` for the case where primary doc still yields no sections |
 | G | Regulated utility FCF screen — utilities (DUK, NEE) have structurally negative FCF due to regulated capex. The `min_fcf_positive_years` check excludes them. V1 limitation — a regulated-utility carve-out requires a separate scoring path. | ✅ Resolved — `sic_code` field added to `XBRLMetrics`; `get_sic()` populates it from EDGAR submissions; `stage01.py` detects SIC 4900-4999 and applies `min_fcf_positive_years_utility` (default 1) instead of the standard 3-year threshold |
+
+---
+
+## Weakness Fixes (Hardening)
+
+Applied after comprehensive codebase audit. Each fix addresses a specific failure mode.
+
+| # | Issue | Fix | Files |
+|---|---|---|---|
+| 1 | FCF CAGR used Revenue CAGR thresholds (copy-paste bug) | Added dedicated `fcf_cagr_t1..t4_min/pts` to `BusinessQualityCfg`; thresholds calibrated for FCF's higher volatility | `config.py`, `business.py` |
+| 2 | Scoring/EA weights not validated to sum to 1.0 | Added `model_validator` to both `ScoringWeightsCfg` and `EntryAttractivenessCfg` — rejects env overrides that break the sum | `config.py` |
+| 3 | Yield expansion gamed by dividend cut | Added DPS YoY guard: if DPS drops >20% YoY from XBRL data, yield expansion score is suppressed | `entry_attractiveness.py` |
+| 4 | Valuation signal measured quality, not price | Added P/E proxy from `EarningsPerShareBasic` XBRL tag; low P/E = cheap = high score. FCF margin retained as fallback | `entry_attractiveness.py`, `edgar.py`, `types.py` |
+| 5 | No retry on MiMo schema validation failure | Added corrective retry: on `ValidationError`, retries once with a prompt containing the error message and original response | `mimo.py` |
+| 6 | `transience_argument` allowed empty string | Changed from `Field(default="")` to `Field(min_length=5, max_length=2000)` — forces MiMo to provide at least a brief argument | `schemas.py` |
+| 7 | Drawdown scoring breakpoints hardcoded | Moved breakpoints to `EntryAttractivenessCfg` as `drawdown_t1..t7` — configurable via env vars | `config.py`, `entry_attractiveness.py` |
+| 8 | `save_opportunity_score` / `save_screen_result` used plain INSERT | Changed to upsert (`_dialect_insert` + `on_conflict_do_update`) — no more duplicate rows on repeated runs | `queries.py` |
+| 9 | EDGAR `total_debt` didn't aggregate long-term + short-term | Added `_extract_debt_components()` that sums all available debt tags per fiscal year; `total_debt` now correctly aggregates `LongTermDebtNoncurrent` + `DebtCurrent` + `ShortTermBorrowings` | `edgar.py` |
+| 10 | Duplicate `_cagr()` function in `business.py` | Removed the duplicate at end of file | `business.py` |
+
+---
+
+## Beta Test Results
+
+Tested against 15 US blue-chip dividend stocks (KO, JNJ, PG, MMM, ABT, MCD, NEE, DUK, V, ACN, MSFT, VZ, T, AMZN, MDT). Portfolio MYR 500,000. Macro: RANGING / EXPANSION / STABLE / LOOSE.
+
+### Funnel Summary
+
+| Stage | Input | Output | Filter |
+|---|---|---|---|
+| 0→1 Quality screen | 15 | 11 | 4 rejected (T, AMZN: no dividend/no FCF; NEE, DUK: utility FCF) |
+| 1→2 Entry Attractiveness | 11 | 11 | All scored and ranked (top N promoted to KIV by target count) |
+| 2→3 MiMo scoring | 5 | 5 | Top 5 scored with dip classification |
+
+### Validated Finalists (MiMo-classified)
+
+| Ticker | Classification | Conf | Score | Mult | MYR |
+|---|---|---|---|---|---|
+| MSFT | TRANSIENT | 0.85 | 89.0 | 1.2× | 30,000 |
+| ACN | CYCLICAL_IDIOSYNCRATIC | 0.70 | 71.1 | 1.0× | 25,000 |
+| MCD | CYCLICAL_IDIOSYNCRATIC | 0.65 | 66.5 | 1.0× | 25,000 |
+| ABT | CYCLICAL_IDIOSYNCRATIC | 0.75 | 63.7 | 1.0× | 25,000 |
+| MDT | STRUCTURAL | 0.75 | 40.9 | 0.6× | 15,000 |
+
+### Known Limitation: MDT STRUCTURAL Classification
+
+Medtronic (MDT) is classified as STRUCTURAL (score 40.9, DQ=10.0) despite being a likely CYCLICAL_IDIOSYNCRATIC case (China hospital spending cuts, product recall). The filing's risk factor section contains heavy trade regulation, tariff, and compliance language that reads as structural. MiMo reads risk factors literally — they are lawyer-written worst-case boilerplate, not forward-looking statements. DQ=10.0 and 0.6× sizing are appropriately defensive given the ambiguity. **Mitigation under investigation:** weight MD&A more heavily than Risk Factors in the MiMo prompt, as MD&A reflects management's actual forward view.
+
+### Known Limitations
+
+| Category | Limitation | Impact |
+|---|---|---|
+| MiMo risk factors | Lawyer-written boilerplate reads as structural to LLM | Stocks with heavy regulatory language (MDT, healthcare, defense) may be misclassified as STRUCTURAL |
+| yfinance data | No retry, no rate limiting, silent empty returns under load | Price snapshots may be PARTIAL quality; `period="1y"` may return less for recent IPOs |
+| NOBL ETF | ProShares CSV format may change; no API contract | Dynamic universe fetch may break without warning; falls back to static list |
+| Test coverage | Zero tests for: macro regime, position sizing, persistence, filings, FRED, Bursa, oversold scoring, API endpoints | Integration layer between scoring components is untested |
+| Malaysian stocks | Bursa scraper is fragile (V1 limitation); `sector_override_eligible` defaults false for MY | MY stocks cannot use sector peer basket overrides |
