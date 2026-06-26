@@ -2,7 +2,7 @@
 
 A funnel-based, agentic investment research platform that surfaces quality income stocks at dip entry points — not a trading bot, a decision-support system with human-in-the-loop confirmation.
 
-**Current status:** Core pipeline production-hardened and end-to-end validated. 114 unit tests passing. Stage 1→2 redesigned from binary dip trigger to continuous Entry Attractiveness scoring (0-100) with 5 dimensions: drawdown, yield expansion, dividend growth, valuation, trend. Stocks ranked and tagged — no more arbitrary 8% threshold. Expanded universe: 197 US dividend stocks (110 Aristocrats + 25 Kings + 81 Quality), plus live NOBL ETF holdings via `--tier nobl`. KIV basket fills to target count (default 50) with configurable minimum floor. MiMo 2.5 dip classification operates in **batch mode** — processes multiple stocks per API call (default 10 per chunk) instead of N individual calls. Classifications are **cached with filing-hash TTL** (default 90 days) — no redundant API calls when filings haven't changed. Corrective retry on schema validation failure. 5 few-shot examples in prompt.
+**Current status:** Core pipeline production-hardened and end-to-end validated. 114 unit tests passing. All stages run in **parallel** via `ThreadPoolExecutor` — EDGAR fetches, price snapshots, filing downloads, and MiMo batch classification all use concurrent workers. Stage 0→1 uses **domain-based TTL skip** (per-domain cache for aristocrats/kings/quality — skips re-screening when ticker lists haven't changed). Stage 1→2 redesigned from binary dip trigger to continuous Entry Attractiveness scoring (0-100) with 5 dimensions. Expanded universe: 197 US dividend stocks (110 Aristocrats + 25 Kings + 81 Quality), plus live NOBL ETF holdings via `--tier nobl`. KIV basket fills to target count (default **20**, configurable via `--kiv-target`) with configurable minimum floor. MiMo 2.5 dip classification operates in **parallel batch mode** — multiple chunks classified concurrently (default 2 concurrent batches of 5 stocks each). Classifications are **cached with filing-hash TTL** (default 90 days) — no redundant API calls when filings haven't changed. Corrective retry on schema validation failure. 5 few-shot examples in prompt.
 
 ## End Portfolio Goal
 
@@ -35,10 +35,10 @@ PROSPECTS POOL  (~100–150 stocks from 197 universe)
       │    - Valuation / FCF quality (15%)
       │    - Price trend momentum (10%)
       │  Stocks ranked by score, tagged (DEEP_DIP, YIELD_EXPANSION, DIVIDEND_GROWTH,
-      │    UNDERVALUED, TRENDING_DOWN), top N promoted to KIV (target = 50)
+      │    UNDERVALUED, TRENDING_DOWN), top N promoted to KIV (target = 20)
       │  Minimum attractiveness floor prevents promoting garbage in bull markets
       ▼
-KIV BASKET  (target 50 stocks)   ← under continuous watch
+KIV BASKET  (target 20 stocks)   ← under continuous watch
       │     daily: price + technicals
       │     weekly: new filing scan
       │     TTL: 90 days max → Dormant if no trigger
@@ -84,7 +84,7 @@ KIV is not a waiting room. It is an active watch list with explicit lifecycle ru
 
 | Transition | Direction | Trigger |
 |---|---|---|
-| Prospects → KIV | Promote | Entry Attractiveness score meets floor, ranked in top N (target 50) |
+| Prospects → KIV | Promote | Entry Attractiveness score meets floor, ranked in top N (target 20) |
 | KIV → Candidate | Promote | Secondary signal confirmed + context check passes |
 | KIV → Dormant | Demote | TTL 90 days, no trigger — revisit monthly |
 | KIV → Rejected | Demote | Material negative event, dividend cut, FCF turns negative, dividend suspended |
@@ -134,7 +134,7 @@ Each stock is tagged with the criteria it scored highest on:
 - **UNDERVALUED** — high FCF margin + revenue growth
 - **TRENDING_DOWN** — confirmed downtrend (below both SMAs)
 
-Stocks are ranked by EA score, top N promoted to KIV (target count configurable, default 50). Minimum floor prevents promoting stocks below a quality threshold in bull markets.
+Stocks are ranked by EA score, top N promoted to KIV (target count configurable, default 20). Minimum floor prevents promoting stocks below a quality threshold in bull markets.
 
 ### Position sizing (yield-aware)
 
@@ -178,13 +178,29 @@ BUSINESS_Q__FCF_CAGR_T1_MIN=0.20
 # Example: adjust drawdown breakpoints
 ENTRY_ATTRACTIVENESS__DRAWDOWN_T4=0.12
 
-# Example: MiMo batch processing (10 stocks per API call, 90-day cache TTL)
-MIMO_BATCH__BATCH_SIZE=10
+# Example: MiMo batch processing (5 stocks per chunk, 2 concurrent chunks, 90-day cache TTL)
+MIMO_BATCH__BATCH_SIZE=5
+MIMO_BATCH__MAX_CONCURRENT_BATCHES=2
 MIMO_BATCH__TTL_DAYS=90
 MIMO_BATCH__MAX_CHARS_PER_STOCK=2000
+
+# Example: KIV basket target count
+KIV__TARGET_SIZE=20
 ```
 
 Sub-models: `DipTriggerCfg` · `EntryAttractivenessCfg` · `KivCfg` · `ScoringWeightsCfg` · `ScoreMultiplierCfg` · `SizingCfg` · `IncomeQualityCfg` · `BusinessQualityCfg` · `OversoldQualityCfg` · `DipQualityCfg` · `MacroCfg` · `MimoBatchCfg` · `FilingCfg` · `BacktestCfg`
+
+### CLI Flags
+
+| Flag | Default | Description |
+|---|---|---|
+| `--portfolio-myr` | (required) | Total portfolio value in MYR |
+| `--tier` | `all` | Universe tier: `aristocrats`, `kings`, `quality`, `nobl`, `all` |
+| `--tickers` | (none) | Explicit ticker list — overrides `--tier` |
+| `--kiv-target` | `20` | KIV basket target count |
+| `--max-concurrent` | `2` | Max concurrent MiMo batch chunks |
+| `--use-db` | `false` | Enable PostgreSQL persistence |
+| `--skip-mimo` | `false` | Skip MiMo classification (Stage 2→3) |
 
 ---
 
@@ -230,14 +246,16 @@ Rule-based MCP tools are always attempted first. MiMo 2.5 is invoked only when:
 - Filing section requires narrative understanding (MD&A, Risk Factors, YoY language diff)
 - Dip classification requires reconciling conflicting signals
 
-MiMo 2.5 operates in **batch mode** at Stage 2→3:
-1. All filing data is gathered first (no MiMo calls yet)
+MiMo 2.5 operates in **parallel batch mode** at Stage 2→3:
+1. All filing data is gathered first in parallel (ThreadPoolExecutor, 5 workers)
 2. Cached classifications are checked (filing-hash + TTL, default 90 days)
-3. Uncached stocks are chunked into batches (default 10 per API call)
-4. Each chunk is classified in a single MiMo call
+3. Uncached stocks are chunked into batches (default 5 per API call)
+4. Multiple chunks are classified **concurrently** (default 2 parallel batches)
 5. Results are cached for future runs
 
-This reduces MiMo API calls from N (one per stock) to ⌈N/10⌉ — a 50-stock KIV basket uses 5 calls instead of 50. On subsequent runs, stocks whose filings haven't changed use the cache (zero MiMo calls).
+This reduces wall-clock time significantly — 5 stocks classify in ~90s (18s/stock) vs ~225s sequential (45s/stock), a 2.5× speedup. On subsequent runs, stocks whose filings haven't changed use the cache (zero MiMo calls).
+
+MiMo API uses `httpx.post()` with 180s read timeout (thinking mode is silent for 45-72s before responding) and a keep-alive monitor that logs at 30s intervals.
 
 MiMo 2.5 always outputs into a **schema-validated JSON envelope**. If output fails schema validation, the stock is flagged for human review — never silently mis-scored.
 
@@ -256,6 +274,7 @@ MiMo 2.5 always outputs into a **schema-validated JSON envelope**. If output fai
 | Macro data | FRED API (free) — DGS2, DGS10, NFCI, DEXMAUS, RECPROUSM156N |
 | Config | pydantic-settings v2 with `env_nested_delimiter="__"` |
 | Tests | pytest — 114 tests, all passing |
+| Parallelism | `concurrent.futures.ThreadPoolExecutor` across all stages |
 
 ---
 
@@ -296,8 +315,16 @@ PYTHONPATH=src python scripts/run_funnel.py --tier nobl --portfolio-myr 500000  
 # Run against specific tickers (overrides --tier)
 PYTHONPATH=src python scripts/run_funnel.py --tickers KO JNJ PG ACN MSFT --portfolio-myr 500000
 
+# Customize KIV target and concurrency
+PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --kiv-target 30
+PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --max-concurrent 4
+
 # With PostgreSQL persistence
 PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --use-db
+
+# Gate test: validate MiMo batch before full universe run
+PYTHONPATH=src python scripts/test_mimo_batch.py --stocks KO JNJ PG MSFT ACN --batch-size 5
+PYTHONPATH=src python scripts/test_mimo_batch.py --stocks KO --batch-size 1 --skip-filing-fetch
 
 # Tests
 PYTHONPATH=src python -m pytest tests/ -v
@@ -375,6 +402,18 @@ Tested against 15 US blue-chip dividend stocks (KO, JNJ, PG, MMM, ABT, MCD, NEE,
 ### Known Limitation: MDT STRUCTURAL Classification
 
 Medtronic (MDT) is classified as STRUCTURAL (score 40.9, DQ=10.0) despite being a likely CYCLICAL_IDIOSYNCRATIC case (China hospital spending cuts, product recall). The filing's risk factor section contains heavy trade regulation, tariff, and compliance language that reads as structural. MiMo reads risk factors literally — they are lawyer-written worst-case boilerplate, not forward-looking statements. DQ=10.0 and 0.6× sizing are appropriately defensive given the ambiguity. **Mitigation under investigation:** weight MD&A more heavily than Risk Factors in the MiMo prompt, as MD&A reflects management's actual forward view.
+
+### Parallel Processing Benchmark
+
+Tested with 5 stocks (KO, JNJ, PG, MSFT, ACN) using synthetic filing data, batch_size=2, max_concurrent=2.
+
+| Chunk | Stocks | Wall time | Result |
+|---|---|---|---|
+| 1 | KO, JNJ | 50s | ✓ 2/2 classified |
+| 2 | PG, MSFT | 64s | ✓ 2/2 classified |
+| 3 | ACN | 41s | ✓ 1/1 classified |
+
+**Total: 90.5s for 5 stocks = 18.1s/stock** (vs 44.5s sequential = **2.5× speedup**). Gate test passed — MiMo batch API works reliably with parallel chunks.
 
 ### Known Limitations
 
