@@ -1156,8 +1156,64 @@ def _generate_html_report(
              color: var(--muted); font-size: 0.75rem; text-align: center; }}
   .macro-pills {{ display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }}
   .pill {{ background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-           padding: 0.3rem 0.8rem; font-size: 0.8rem; }}
+           padding: 0.3rem 0.8rem; font-size: 0.8rem; position: relative; cursor: default; }}
   .pill .axis {{ color: var(--muted); font-size: 0.7rem; }}
+  .pill .pill-tip {{ visibility:hidden; opacity:0; position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 8px);
+             background:var(--card); border:1px solid var(--border); border-radius:6px;
+             padding:0.5rem 0.7rem; font-size:0.75rem; color:var(--text);
+             white-space:normal; width:260px; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,0.4);
+             transition: opacity 0.15s ease; pointer-events:none; z-index:10; text-align:left; }}
+  .pill:hover .pill-tip {{ visibility:visible; opacity:1; }}
+
+  /* ── Onboarding Tour ── */
+  #tour-overlay {{
+    display:none; position:absolute; top:0; left:0; z-index:9990;
+    background:rgba(0,0,0,0.15); transition:opacity 0.3s ease;
+    pointer-events:none;
+  }}
+  #tour-overlay.active {{ display:block; }}
+  #tour-spotlight {{
+    position:absolute; border-radius:8px;
+    border: 4px solid #e74c3c;
+    box-shadow: 0 0 12px 2px rgba(231,76,60,0.5);
+    transition: all 0.35s cubic-bezier(.4,0,.2,1);
+    pointer-events:none; z-index:9991;
+  }}
+  #tour-card {{
+    display:none; position:fixed; z-index:9992;
+    background:var(--card); border:1px solid var(--accent);
+    border-radius:10px; padding:1.2rem 1.4rem; max-width:360px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    font-size:0.85rem; line-height:1.6; color:var(--text);
+    top:auto; bottom:1.5rem; right:1.5rem;
+  }}
+  #tour-card.active {{ display:block; }}
+  #tour-card h3 {{ color:var(--accent); font-size:0.95rem; margin-bottom:0.5rem; }}
+  #tour-card p {{ color:var(--muted); margin-bottom:0.8rem; }}
+  #tour-card .tour-nav {{ display:flex; justify-content:space-between; align-items:center; }}
+  #tour-card .tour-step {{ color:var(--muted); font-size:0.75rem; }}
+  #tour-card button {{
+    background:var(--accent); color:var(--bg); border:none; border-radius:6px;
+    padding:0.4rem 1rem; font-size:0.8rem; cursor:pointer; font-weight:600;
+  }}
+  #tour-card button:hover {{ opacity:0.85; }}
+  #tour-card .tour-prev {{
+    background:transparent; color:var(--muted); border:1px solid var(--border);
+    padding:0.4rem 1rem; font-size:0.8rem; cursor:pointer; font-weight:600;
+  }}
+  #tour-card .tour-prev:hover {{ color:var(--text); border-color:var(--muted); }}
+  #tour-card .tour-skip {{
+    background:transparent; color:var(--muted); font-weight:400;
+    text-decoration:underline; font-size:0.75rem; padding:0.3rem 0.6rem;
+  }}
+  #tour-card .tour-skip:hover {{ color:var(--text); }}
+  #tour-replay {{
+    position:fixed; bottom:1.2rem; right:1.2rem; z-index:9989;
+    background:var(--card); border:1px solid var(--border); border-radius:20px;
+    padding:0.35rem 0.9rem; font-size:0.75rem; color:var(--muted);
+    cursor:pointer; transition:border-color 0.2s;
+  }}
+  #tour-replay:hover {{ border-color:var(--accent); color:var(--accent); }}
 </style>
 <script>
 function toggleDetail(id) {{
@@ -1183,13 +1239,13 @@ function toggleDetail(id) {{
 
 <h2>🌍 Macro Regime</h2>
 <div class="macro-pills">
-  <div class="pill"><span class="axis">Market</span> {macro_market}</div>
-  <div class="pill"><span class="axis">Growth</span> {macro_growth}</div>
-  <div class="pill"><span class="axis">Rates</span> {macro_rates}</div>
-  <div class="pill"><span class="axis">FinCond</span> {macro_fin}</div>
+  <div class="pill"><span class="axis">Market</span> {macro_market}<span class="pill-tip">Market Structure: Derived from price action — TRENDING_UP (bullish trend), TRENDING_DOWN (bearish), or RANGING (consolidation). Sets the directional bias for dip classification confidence.</span></div>
+  <div class="pill"><span class="axis">Growth</span> {macro_growth}<span class="pill-tip">Growth Regime: Based on NY Fed yield-curve recession probability. EXPANSION = normal growth. RECESSION_RISK = inverted curve signals elevated recession probability within 12 months.</span></div>
+  <div class="pill"><span class="axis">Rates</span> {macro_rates}<span class="pill-tip">Rate Environment: From FRED H.15 Treasury yields. STABLE = normal conditions. RATE_SHOCK_UP = rapid rate increase (hurts REITs, utilities). RATE_SHOCK_DOWN = rate cuts (boosts rate-sensitive sectors).</span></div>
+  <div class="pill"><span class="axis">FinCond</span> {macro_fin}<span class="pill-tip">Financial Conditions: From Chicago Fed NFCI/ANFCI index. LOOSE = easy credit, supportive for equities. TIGHTENING = credit contraction — increases risk for leveraged companies and suppresses valuations.</span></div>
 </div>
 
-<h2>🎯 KIV Basket ({total_kiv} stocks)</h2>
+<h2 id="kiv-basket">🎯 KIV Basket ({total_kiv} stocks)</h2>
 <table>
 <thead><tr>
   <th>#</th>
@@ -1325,7 +1381,7 @@ function toggleDetail(id) {{
             })
 
     if _review_anomalies:
-        html += """<h2>⚠️ MiMo Review — Action Required</h2>
+        html += """<h2 id="mimo-review">⚠️ MiMo Review — Action Required</h2>
 <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem">
   Stocks with unexpected classifications, low confidence, or structural flags that need human review.
 </p>
@@ -1350,7 +1406,7 @@ function toggleDetail(id) {{
 """
 
     html += """
-<h2>📋 Prospects (below KIV threshold)</h2>
+<h2 id="prospects-table">📋 Prospects (below KIV threshold)</h2>
 <table>
 <thead><tr><th>Ticker</th><th>EA Score</th><th>Dip%</th><th>RSI</th><th>Tags</th></tr></thead>
 <tbody>
@@ -1366,7 +1422,7 @@ function toggleDetail(id) {{
 
     html += """</tbody></table>
 
-<h2>❌ Rejected</h2>
+<h2 id="rejected-table">❌ Rejected</h2>
 <table>
 <thead><tr><th>Ticker</th><th>Status</th><th>Reason</th></tr></thead>
 <tbody>
@@ -1383,6 +1439,182 @@ function toggleDetail(id) {{
 </div>
 
 </div>
+
+<!-- ── Onboarding Tour ── -->
+<div id="tour-overlay"><div id="tour-spotlight"></div></div>
+<div id="tour-card">
+  <h3 id="tour-title"></h3>
+  <p id="tour-desc"></p>
+  <div class="tour-nav">
+    <button class="tour-skip" onclick="tourEnd()">Skip tour</button>
+    <button class="tour-prev" id="tour-prev" onclick="tourPrev()" style="display:none">Prev</button>
+    <span class="tour-step" id="tour-step-label"></span>
+    <button id="tour-next" onclick="tourNext()">Next</button>
+  </div>
+</div>
+<button id="tour-replay" onclick="tourStart()" title="Show interactive tour">? Tour</button>
+
+<script>
+(function() {{
+  var STEPS = [
+    {{
+      sel: '.cards',
+      title: '📊 Pipeline Summary',
+      desc: 'These cards show the funnel at a glance: how many stocks entered the universe, how many passed Stage 0→1 screening, how many landed in the KIV basket, and the average opportunity score. The USD/MYR rate is used for all position sizing.'
+    }},
+    {{
+      sel: '.macro-pills',
+      title: '🌍 Macro Regime',
+      desc: 'The macro regime is evaluated on four axes (Market Structure, Growth, Rates, Financial Conditions) before any stock analysis. This sets the context — a TIGHTENING regime may suppress scores for rate-sensitive sectors. Hover over each pill for the current state.'
+    }},
+    {{
+      sel: '#kiv-basket',
+      title: '🎯 KIV Basket',
+      desc: 'The Keep-In-View basket holds stocks that passed dip-trigger screening. This is the core table — each row is a candidate for further due diligence. Stocks can be promoted to Candidate/Finalist or demoted to Dormant/Rejected over time.'
+    }},
+    {{
+      sel: 'th',
+      title: '💡 Column Tooltips',
+      desc: 'Hover over any column header to see a detailed explanation of what that metric means and why it matters. These tooltips are available on every column — EA, Dip%, RSI, Yield%, MiMo Class, Score, and more.'
+    }},
+    {{
+      sel: '.detail-toggle',
+      title: '🔍 Clickable Tickers',
+      desc: 'Click any ticker symbol (like this one) to expand a details panel showing Income Quality, Business Quality, Dip Quality, Oversold Confidence scores, plus MiMo 2.5 evidence summary, key risks, structural flags, and transience argument.'
+    }},
+    {{
+      sel: '.tag',
+      title: '🏷️ EA Tags',
+      desc: 'These tags are early-attraction signals from the rule-based screening engine. Hover over them for a description — DEEP_DIP means ≥15% drawdown, YIELD_EXPANSION means yield exceeds historical average, DIVIDEND_GROWTH means positive CAGR, etc.'
+    }},
+    {{
+      sel: '.score-high, .score-mid, .score-low',
+      title: '📈 Opportunity Score',
+      desc: 'The composite score (0–100) combines four dimensions: 30% Income Quality + 30% Business Quality + 30% Dip Quality + 10% Oversold Confidence. Green ≥70, Yellow ≥60, Grey <60. This drives position sizing — higher score = larger allocation.'
+    }},
+    {{
+      sel: '#mimo-review',
+      title: '🧠 MiMo Review Panel',
+      desc: 'This section surfaces anomalies that need human review: UNKNOWN classifications, STRUCTURAL flags, low-confidence predictions (<0.60), or stocks with structural risk flags. MiMo 2.5 is only invoked when rule-based checks cannot determine the dip type.'
+    }},
+    {{
+      sel: '#prospects-table',
+      title: '📋 Prospects Table',
+      desc: 'Stocks that passed Stage 0→1 screening but did not trigger a dip signal. These are watched — if price drops further and triggers a dip, they will be promoted to the KIV basket. EA score and tags are shown for reference.'
+    }},
+    {{
+      sel: '#rejected-table',
+      title: '❌ Rejected Stocks',
+      desc: 'Stocks that failed Stage 0→1 screening — usually due to insufficient dividend history, negative FCF, payout ratio too high, or missing data. The reason column explains why each was filtered out.'
+    }}
+  ];
+  var idx = 0;
+  var overlay = document.getElementById('tour-overlay');
+  var spotlight = document.getElementById('tour-spotlight');
+  var card = document.getElementById('tour-card');
+  var titleEl = document.getElementById('tour-title');
+  var descEl = document.getElementById('tour-desc');
+  var stepLabel = document.getElementById('tour-step-label');
+  var nextBtn = document.getElementById('tour-next');
+  var prevBtn = document.getElementById('tour-prev');
+  var replayBtn = document.getElementById('tour-replay');
+
+  function resizeOverlay() {{
+    var docH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    var docW = Math.max(document.body.scrollWidth, document.documentElement.scrollWidth);
+    overlay.style.width = docW + 'px';
+    overlay.style.height = docH + 'px';
+  }}
+
+  function positionSpotlight(el) {{
+    el.scrollIntoView({{ behavior: 'instant', block: 'center' }});
+    var r = el.getBoundingClientRect();
+    var pad = 8;
+    // Overlay is position:absolute (document-relative), so add scroll offsets
+    spotlight.style.left = (r.left - pad + window.scrollX) + 'px';
+    spotlight.style.top = (r.top - pad + window.scrollY) + 'px';
+    spotlight.style.width = (r.width + pad * 2) + 'px';
+    spotlight.style.height = (r.height + pad * 2) + 'px';
+  }}
+
+  function showStep(i) {{
+    var step = STEPS[i];
+    var el = document.querySelector(step.sel);
+    if (!el) {{
+      // Skip steps whose elements don't exist
+      if (i < STEPS.length - 1) {{ idx = i + 1; showStep(idx); return; }}
+      tourEnd(); return;
+    }}
+    idx = i;
+    titleEl.textContent = step.title;
+    descEl.textContent = step.desc;
+    stepLabel.textContent = (i + 1) + ' / ' + STEPS.length;
+    nextBtn.textContent = i === STEPS.length - 1 ? 'Done' : 'Next';
+    prevBtn.style.display = i === 0 ? 'none' : '';
+    overlay.classList.add('active');
+    card.classList.add('active');
+    resizeOverlay();
+    positionSpotlight(el);
+  }}
+
+  window.tourNext = function() {{
+    if (idx >= STEPS.length - 1) {{ tourEnd(); return; }}
+    idx++;
+    showStep(idx);
+  }};
+  window.tourPrev = function() {{
+    if (idx <= 0) return;
+    idx--;
+    showStep(idx);
+  }};
+  window.tourEnd = function() {{
+    overlay.classList.remove('active');
+    card.classList.remove('active');
+    try {{ localStorage.setItem('incomos_tour_done', '1'); }} catch(e) {{}}
+  }};
+  window.tourStart = function() {{
+    idx = 0;
+    showStep(0);
+  }};
+
+  // Auto-start on first visit
+  var seen = false;
+  try {{ seen = localStorage.getItem('incomos_tour_done') === '1'; }} catch(e) {{}}
+  if (!seen) {{
+    // Small delay so DOM is fully painted
+    setTimeout(tourStart, 400);
+  }}
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {{
+    if (e.key === 'Escape') tourEnd();
+    if (e.key === 'ArrowRight' || e.key === 'Enter') tourNext();
+    if (e.key === 'ArrowLeft') tourPrev();
+  }});
+  // Close on click outside card
+  document.addEventListener('click', function(e) {{
+    if (!card.contains(e.target) && e.target.id !== 'tour-replay' && overlay.classList.contains('active')) {{
+      tourEnd();
+    }}
+  }});
+  // Reposition on scroll/resize
+  var repositionTimer;
+  function onReposition() {{
+    clearTimeout(repositionTimer);
+    repositionTimer = setTimeout(function() {{
+      if (overlay.classList.contains('active')) {{
+        resizeOverlay();
+        var step = STEPS[idx];
+        var el = document.querySelector(step.sel);
+        if (el) positionSpotlight(el);
+      }}
+    }}, 50);
+  }}
+  window.addEventListener('scroll', onReposition, {{ passive: true }});
+  window.addEventListener('resize', onReposition);
+}})();
+</script>
+
 </body>
 </html>"""
 
