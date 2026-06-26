@@ -25,3 +25,15 @@ mimo_review.md
 
 # Research store local exports
 data/exports/
+
+# Debug / smoke test artifacts
+_debug_*.py
+_smoke_*.db
+_smoke_*.log
+_beta_sqlite*.db
+_beta_sqlite*.log
+beta_results.txt
+funnel_debug.log
+funnel_output*.log
+test_output.txt
+report.html
