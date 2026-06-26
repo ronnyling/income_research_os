@@ -1,0 +1,24 @@
+MiMo 2.5 Batch Classification Results
+Generated: 2026-06-26T15:25:38.813427+00:00
+============================================================
+
+ABT       TRANSIENT                  conf=0.50  
+ACN       CYCLICAL_IDIOSYNCRATIC     conf=0.70  
+ADI       CYCLICAL_MACRO             conf=0.60  
+ARE       CYCLICAL_MACRO             conf=0.75  
+ATO       STRUCTURAL_MACRO_EXPOSED   conf=0.65  
+CLX       TRANSIENT_MACRO_AMPLIFIED  conf=0.75  
+CPB       CYCLICAL_MACRO             conf=0.60  
+FANG      CYCLICAL_MACRO             conf=0.80  
+FDS       TRANSIENT                  conf=0.70  
+GILD      CYCLICAL_IDIOSYNCRATIC     conf=0.70  
+ICE       CYCLICAL_IDIOSYNCRATIC     conf=0.70  
+LOW       CYCLICAL_IDIOSYNCRATIC     conf=0.65  
+MCD       UNKNOWN                    conf=0.50  
+MCHP      CYCLICAL_IDIOSYNCRATIC     conf=0.70  
+MDT       TRANSIENT_MACRO_AMPLIFIED  conf=0.70  
+MSFT      TRANSIENT                  conf=0.80  
+NKE       CYCLICAL_IDIOSYNCRATIC     conf=0.80  
+SCHW      CYCLICAL_MACRO             conf=0.80  
+SYK       TRANSIENT_MACRO_AMPLIFIED  conf=0.80  
+TMUS      CYCLICAL_IDIOSYNCRATIC     conf=0.75  

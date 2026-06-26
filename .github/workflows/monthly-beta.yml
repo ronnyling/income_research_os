@@ -1,0 +1,65 @@
+name: Monthly Full Universe Beta
+
+on:
+  schedule:
+    # Run on the 1st of every month at 02:00 UTC
+    - cron: '0 2 1 * *'
+  workflow_dispatch:
+    inputs:
+      portfolio_myr:
+        description: 'Portfolio size in MYR'
+        required: false
+        default: '500000'
+      tier:
+        description: 'Universe tier (all, aristocrats, kings, quality, nobl)'
+        required: false
+        default: 'all'
+
+permissions:
+  contents: write
+  pages: write
+
+env:
+  PYTHONPATH: src
+  MIMO_API_KEY: ${{ secrets.MIMO_API_KEY }}
+
+jobs:
+  run-funnel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run full universe funnel
+        run: |
+          python scripts/run_funnel.py \
+            --tier ${{ github.event.inputs.tier || 'all' }} \
+            --portfolio-myr ${{ github.event.inputs.portfolio_myr || '500000' }} \
+            --output-html docs/index.html
+
+      - name: Commit results to GitHub Pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          git diff --staged --quiet || git commit -m "chore: update monthly beta results [skip ci]"
+          git push
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: beta-results
+          path: docs/index.html
+          retention-days: 90

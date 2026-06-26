@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Income Compounder Research OS — Beta Results</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #e6edf3;
+    --muted: #8b949e; --accent: #58a6ff; --green: #3fb950; --yellow: #d29922;
+    --red: #f85149; --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+         background: var(--bg); color: var(--text); padding: 2rem; line-height: 1.5; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  h2 { font-size: 1.3rem; margin: 2rem 0 0.8rem; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+  .card .label { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card .value { font-size: 1.6rem; font-weight: 700; margin-top: 0.3rem; }
+  .card .value.green { color: var(--green); }
+  .card .value.yellow { color: var(--yellow); }
+  .card .value.blue { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1rem; }
+  th { background: var(--card); color: var(--muted); text-transform: uppercase; font-size: 0.7rem;
+       letter-spacing: 0.05em; padding: 0.6rem 0.8rem; text-align: left; border-bottom: 2px solid var(--border);
+       position: sticky; top: 0; }
+  td { padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .score-high { color: var(--green); font-weight: 700; }
+  .score-mid { color: var(--yellow); font-weight: 600; }
+  .score-low { color: var(--muted); }
+  .tag { display: inline-block; background: rgba(88,166,255,0.12); color: var(--accent);
+          border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.7rem; margin: 0.1rem; }
+  .rejected-note { color: var(--muted); font-size: 0.8rem; }
+  .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border);
+             color: var(--muted); font-size: 0.75rem; text-align: center; }
+  .macro-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .pill { background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+           padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+  .pill .axis { color: var(--muted); font-size: 0.7rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>📊 Income Compounder Research OS</h1>
+<p class="subtitle">Full Universe Beta Results — 2026-06-26 15:20 UTC &middot; Portfolio MYR 500,000 &middot; 329s</p>
+
+<div class="cards">
+  <div class="card"><div class="label">Universe</div><div class="value blue">197</div></div>
+  <div class="card"><div class="label">Prospects</div><div class="value">72</div></div>
+  <div class="card"><div class="label">KIV Basket</div><div class="value yellow">20 / 20</div></div>
+  <div class="card"><div class="label">Rejected</div><div class="value" style="color:var(--red)">105</div></div>
+  <div class="card"><div class="label">Avg Score</div><div class="value green">69.1</div></div>
+  <div class="card"><div class="label">USD/MYR</div><div class="value">4.1150</div></div>
+</div>
+
+<h2>🌍 Macro Regime</h2>
+<div class="macro-pills">
+  <div class="pill"><span class="axis">Market</span> RANGING</div>
+  <div class="pill"><span class="axis">Growth</span> EXPANSION</div>
+  <div class="pill"><span class="axis">Rates</span> STABLE</div>
+  <div class="pill"><span class="axis">FinCond</span> LOOSE</div>
+</div>
+
+<h2>🎯 KIV Basket (20 stocks)</h2>
+<table>
+<thead><tr>
+  <th>#</th><th>Ticker</th><th>EA</th><th>Dip%</th><th>RSI</th><th>Tags</th>
+  <th>MiMo Class</th><th>Conf</th><th>IQ</th><th>BQ</th><th>DQ</th><th>OC</th>
+  <th>Score</th><th>Mult</th><th>Size (MYR)</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td>1</td><td><strong>MSFT</strong></td><td>81</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">DIVIDEND_GROWTH</span></td>
+  <td>TRANSIENT</td><td>0.80</td><td>95.0</td><td>97.0</td><td>80.0</td><td>64.0</td>
+  <td class="score-high">88.0</td><td>1.2x</td><td><strong>MYR 30,000</strong></td>
+</tr>
+<tr>
+  <td>2</td><td><strong>SCHW</strong></td><td>66</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_MACRO</td><td>0.80</td><td>100.0</td><td>100.0</td><td>60.0</td><td>20.0</td>
+  <td class="score-high">80.0</td><td>1.2x</td><td><strong>MYR 30,000</strong></td>
+</tr>
+<tr>
+  <td>3</td><td><strong>FDS</strong></td><td>59</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">TRENDING_DOWN</span></td>
+  <td>TRANSIENT</td><td>0.70</td><td>92.0</td><td>75.0</td><td>76.2</td><td>61.0</td>
+  <td class="score-high">79.1</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>4</td><td><strong>SYK</strong></td><td>58</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>TRANSIENT_MACRO_AMPLIFIED</td><td>0.80</td><td>95.0</td><td>90.0</td><td>68.0</td><td>20.0</td>
+  <td class="score-high">77.9</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>5</td><td><strong>MCHP</strong></td><td>54</td><td>-</td><td>-</td>
+  <td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.70</td><td>95.0</td><td>95.0</td><td>53.5</td><td>14.0</td>
+  <td class="score-high">74.5</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>6</td><td><strong>FANG</strong></td><td>52</td><td>-</td><td>-</td>
+  <td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_MACRO</td><td>0.80</td><td>100.0</td><td>80.0</td><td>60.0</td><td>25.0</td>
+  <td class="score-high">74.5</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>7</td><td><strong>ICE</strong></td><td>84</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">DIVIDEND_GROWTH</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.70</td><td>100.0</td><td>68.0</td><td>53.5</td><td>64.0</td>
+  <td class="score-high">72.9</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>8</td><td><strong>ADI</strong></td><td>50</td><td>-</td><td>-</td>
+  <td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_MACRO</td><td>0.60</td><td>95.0</td><td>80.0</td><td>57.5</td><td>18.0</td>
+  <td class="score-high">71.5</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>9</td><td><strong>ACN</strong></td><td>78</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">DIVIDEND_GROWTH</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.70</td><td>92.0</td><td>62.0</td><td>53.5</td><td>89.0</td>
+  <td class="score-high">71.2</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>10</td><td><strong>NKE</strong></td><td>83</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">DIVIDEND_GROWTH</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.80</td><td>95.0</td><td>67.0</td><td>54.0</td><td>47.0</td>
+  <td class="score-mid">69.5</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>11</td><td><strong>ARE</strong></td><td>59</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_MACRO</td><td>0.75</td><td>80.0</td><td>80.0</td><td>59.4</td><td>30.0</td>
+  <td class="score-mid">68.8</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>12</td><td><strong>ABT</strong></td><td>50</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">UNDERVALUED</span></td>
+  <td>TRANSIENT</td><td>0.50</td><td>83.0</td><td>67.0</td><td>68.8</td><td>22.0</td>
+  <td class="score-mid">67.8</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>13</td><td><strong>MCD</strong></td><td>66</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>UNKNOWN</td><td>0.50</td><td>87.0</td><td>73.0</td><td>50.0</td><td>28.0</td>
+  <td class="score-mid">65.8</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>14</td><td><strong>LOW</strong></td><td>64</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.65</td><td>95.0</td><td>55.0</td><td>53.2</td><td>26.0</td>
+  <td class="score-mid">63.6</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>15</td><td><strong>GILD</strong></td><td>56</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.70</td><td>83.0</td><td>67.0</td><td>53.5</td><td>20.0</td>
+  <td class="score-mid">63.0</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>16</td><td><strong>CLX</strong></td><td>60</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>TRANSIENT_MACRO_AMPLIFIED</td><td>0.75</td><td>90.0</td><td>47.0</td><td>61.9</td><td>22.0</td>
+  <td class="score-mid">61.9</td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
+</tr>
+<tr>
+  <td>17</td><td><strong>ATO</strong></td><td>56</td><td>-</td><td>-</td>
+  <td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>STRUCTURAL_MACRO_EXPOSED</td><td>0.65</td><td>96.0</td><td>75.0</td><td>27.0</td><td>5.0</td>
+  <td class="score-low">59.9</td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
+</tr>
+<tr>
+  <td>18</td><td><strong>TMUS</strong></td><td>57</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">UNDERVALUED</span></td>
+  <td>CYCLICAL_IDIOSYNCRATIC</td><td>0.75</td><td>64.0</td><td>70.0</td><td>53.8</td><td>26.0</td>
+  <td class="score-low">58.9</td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
+</tr>
+<tr>
+  <td>19</td><td><strong>CPB</strong></td><td>54</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">YIELD_EXPANSION</span><span class="tag">DIVIDEND_GROWTH</span></td>
+  <td>CYCLICAL_MACRO</td><td>0.60</td><td>77.0</td><td>47.0</td><td>57.5</td><td>30.0</td>
+  <td class="score-low">57.4</td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
+</tr>
+<tr>
+  <td>20</td><td><strong>MDT</strong></td><td>56</td><td>-</td><td>-</td>
+  <td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td>
+  <td>TRANSIENT_MACRO_AMPLIFIED</td><td>0.70</td><td>80.0</td><td>35.0</td><td>65.8</td><td>22.0</td>
+  <td class="score-low">56.4</td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
+</tr>
+</tbody></table>
+
+<h2>📋 Prospects (below KIV threshold)</h2>
+<table>
+<thead><tr><th>Ticker</th><th>EA Score</th><th>Dip%</th><th>RSI</th><th>Tags</th></tr></thead>
+<tbody>
+<tr><td>KO</td><td>23</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>PG</td><td>43</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>CHD</td><td>32</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>ADM</td><td>30</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>TSN</td><td>21</td><td>-</td><td>-</td><td><span class="tag">DIP</span></td></tr>
+<tr><td>HRL</td><td>40</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>SJM</td><td>18</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>MDLZ</td><td>27</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>JNJ</td><td>24</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>BMY</td><td>40</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>AMGN</td><td>42</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>MMM</td><td>28</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>ITW</td><td>43</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>SWK</td><td>12</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>DOV</td><td>9</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>NUE</td><td>34</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>PH</td><td>26</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>GPC</td><td>50</td><td>-</td><td>-</td><td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>FAST</td><td>21</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>PPG</td><td>35</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>GD</td><td>16</td><td>-</td><td>-</td><td><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>CAT</td><td>30</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>DE</td><td>39</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>D</td><td>15</td><td>-</td><td>-</td><td><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>SRE</td><td>26</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>XEL</td><td>36</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>WEC</td><td>32</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>PNW</td><td>22</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>TGT</td><td>25</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>TJX</td><td>38</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>ROST</td><td>44</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>SBUX</td><td>29</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>YUM</td><td>43</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>BEN</td><td>17</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>NTRS</td><td>24</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>STT</td><td>20</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>INTC</td><td>9</td><td>-</td><td>-</td><td><span class="tag">DIP</span></td></tr>
+<tr><td>IBM</td><td>46</td><td>-</td><td>-</td><td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>APH</td><td>13</td><td>-</td><td>-</td><td><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>O</td><td>32</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>REG</td><td>25</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>LIN</td><td>33</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>EMN</td><td>39</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>VZ</td><td>36</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>CWT</td><td>30</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>AAPL</td><td>44</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>AVGO</td><td>27</td><td>-</td><td>-</td><td><span class="tag">DEEP_DIP</span></td></tr>
+<tr><td>AMAT</td><td>34</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>LRCX</td><td>22</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>KLAC</td><td>44</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>ABBV</td><td>32</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>CVS</td><td>2</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>UNH</td><td>26</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>HUM</td><td>16</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>AXP</td><td>49</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>HBAN</td><td>31</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>XOM</td><td>42</td><td>-</td><td>-</td><td><span class="tag">DEEP_DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>EOG</td><td>48</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>SLB</td><td>32</td><td>-</td><td>-</td><td><span class="tag">DEEP_DIP</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>OXY</td><td>29</td><td>-</td><td>-</td><td><span class="tag">DEEP_DIP</span></td></tr>
+<tr><td>MPC</td><td>34</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>EXR</td><td>38</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>MAA</td><td>44</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>BXP</td><td>34</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>HIW</td><td>5</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>MO</td><td>25</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>STZ</td><td>37</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>UNP</td><td>32</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>CSX</td><td>31</td><td>-</td><td>-</td><td><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>WM</td><td>43</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>RSG</td><td>44</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+<tr><td>WSO</td><td>47</td><td>-</td><td>-</td><td><span class="tag">DIP</span><span class="tag">DIVIDEND_GROWTH</span><span class="tag">UNDERVALUED</span></td></tr>
+</tbody></table>
+
+<h2>❌ Rejected</h2>
+<table>
+<thead><tr><th>Ticker</th><th>Status</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><td>PEP</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CL</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 2 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>SYY</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CAG</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 98.5% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>MKC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 2 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>BG</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 3 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>KDP</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 126.3% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>KMB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>GIS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Revenue not available in XBRL data.; Failed checks: revenue_positive.</td></tr>
+<tr><td>BDX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>BAX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PFE</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 192.9% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>MRK</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 2 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>ZBH</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 2 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>ALGN</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>EW</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>ISRG</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>EMR</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 437.2% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>APD</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>SHW</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>LMT</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>RTX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 2 of last 5 years (need ≥3).; Revenue not available in XBRL data.</td></tr>
+<tr><td>NEE</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4911) -- FCF threshold relaxed to ≥1 of 5 years.; FCF payout ratio 90.1% in FY2025 exceeds ceiling 90%.</td></tr>
+<tr><td>DUK</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4931) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>SO</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4911) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>AEP</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4911) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>ES</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4911) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>ED</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4931) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>AWK</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4941) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>CMS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4931) -- FCF threshold relaxed to ≥1 of 5 years.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CNP</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4911) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>NI</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4931) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>JPM</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>BLK</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 2 of last 2 years (need ≥3).; FCF positive in only 2 of last 2 years (need ≥3).</td></tr>
+<tr><td>TROW</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 123.1% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>AFL</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>MMC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">EDGAR fetch error: Ticker 'MMC' not found in EDGAR. Not a US-listed stock?</td></tr>
+<tr><td>TRV</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CME</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 95.8% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>ADP</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>TXN</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 337.8% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>GLW</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 160.8% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>HPQ</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>WPC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>FRT</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PEB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>SPG</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>ALB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>SEE</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">EDGAR fetch error: Ticker 'SEE' not found in EDGAR. Not a US-listed stock?</td></tr>
+<tr><td>T</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CMCSA</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Revenue not available in XBRL data.; Failed checks: revenue_positive.</td></tr>
+<tr><td>DIS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>AOS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>SJW</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">EDGAR fetch error: Ticker 'SJW' not found in EDGAR. Not a US-listed stock?</td></tr>
+<tr><td>UVV</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 5 years (need ≥3).; Failed checks: fcf_positive.</td></tr>
+<tr><td>NWN</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4924) -- FCF threshold relaxed to ≥1 of 5 years.; FCF positive in only 0 of last 5 years (need ≥1).</td></tr>
+<tr><td>MGEE</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Regulated utility detected (SIC 4900) -- FCF threshold relaxed to ≥1 of 5 years.; FCF payout ratio 389.9% in FY2025 exceeds ceiling 90%.</td></tr>
+<tr><td>FMCB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Revenue not available in XBRL data.; Failed checks: revenue_positive.</td></tr>
+<tr><td>QCOM</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>SNPS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CDNS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>ANSS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">EDGAR fetch error: Ticker 'ANSS' not found in EDGAR. Not a US-listed stock?</td></tr>
+<tr><td>FTNT</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PANW</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2025 — may need manual verification.; FCF positive in only 0 of last 5 years (need ≥3).</td></tr>
+<tr><td>CRWD</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Dividend confirmed in only 0 of last 5 years (need ≥3). Note: dividend data missing (XBRL tag gap) for FY2021, FY2022, FY2023, FY2024, FY2026 — may need manual verification.; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CI</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>ANTM</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">EDGAR fetch error: Ticker 'ANTM' not found in EDGAR. Not a US-listed stock?</td></tr>
+<tr><td>BAC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>WFC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>GS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Revenue not available in XBRL data.; Failed checks: revenue_positive.</td></tr>
+<tr><td>MS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>USB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PNC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>TFC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 2 of last 5 years (need ≥3).; Revenue not available in XBRL data.</td></tr>
+<tr><td>MTB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>FITB</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">Revenue not available in XBRL data.; Failed checks: revenue_positive.</td></tr>
+<tr><td>KEY</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CFG</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>RF</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>CVX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>COP</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PSX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>VLO</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>HES</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">EDGAR fetch error: Ticker 'HES' not found in EDGAR. Not a US-listed stock?</td></tr>
+<tr><td>DVN</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>HAL</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>BKR</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>AMT</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 102.8% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>CCI</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>EQIX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>DLR</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PSA</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>UDR</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 100.5% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>EQR</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>ESS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>SLG</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 101.8% in FY2024 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>KIM</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 1 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>MAC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>PM</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 101.0% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>DEO</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">No XBRL data found — cannot screen.</td></tr>
+<tr><td>BF-B</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 96.4% in FY2026 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>NSC</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 143.8% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+<tr><td>FDX</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF positive in only 0 of last 5 years (need ≥3).; Cannot compute FCF payout ratio — missing FCF or dividends data.</td></tr>
+<tr><td>UPS</td><td style="color:var(--red)">REJECTED</td><td class="rejected-note">FCF payout ratio 105.7% in FY2025 exceeds ceiling 90%.; Failed checks: fcf_payout_ratio.</td></tr>
+</tbody></table>
+
+<div class="footer">
+  Generated by Income Compounder Research OS &middot; 2026-06-26 15:20 UTC<br>
+  Architecture: 5-stage funnel &middot; Rule-based first, MiMo 2.5 fallback &middot; MYR base currency
+</div>
+
+</div>
+</body>
+</html>
