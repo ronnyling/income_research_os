@@ -17,5 +17,10 @@ build/
 # EDGAR ticker cache (regenerated on demand)
 data/edgar_tickers.json
 
+# Pipeline checkpoint and domain cache (regenerated on each run)
+.funnel_checkpoint.json
+.funnel_domain_cache.json
+mimo_results.txt
+
 # Research store local exports
 data/exports/

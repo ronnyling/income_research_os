@@ -1183,7 +1183,7 @@ def main():
             sys.exit(1)
         print(f"Loaded checkpoint from {ckpt.get('timestamp', '?')}")
         # Reconstruct dataclass objects from checkpoint dicts
-        from incomos.core.types import ScreenResult as _SR
+        from incomos.screening.stage01 import ScreenResult as _SR
         from incomos.funnel.entry_attractiveness import EntryAttractivenessResult as _EAR
         from incomos.scoring.engine import ScoringResult as _ScR
         from incomos.sizing import PositionSizing as _PS
@@ -1214,7 +1214,7 @@ def main():
                 def __init__(self, s): self.state = s
                 def __str__(self): return str(self.state)
             def __init__(self, d):
-                self.primary_regime = self._Axis(d.get("market", ""))
+                self.market_structure = self._Axis(d.get("market", ""))
                 self.growth = self._Axis(d.get("growth", ""))
                 self.rates = self._Axis(d.get("rates", ""))
                 self.financial_conditions = self._Axis(d.get("fincond", ""))

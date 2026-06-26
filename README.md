@@ -109,6 +109,23 @@ Refreshes run on program startup, not on an external cron/scheduler. Each data t
 
 **Failure rule:** If a refresh fails, the `last_refresh` timestamp is NOT updated. The next run detects it as still stale and retries.
 
+### Domain Cache TTL
+
+The EDGAR domain cache (`.funnel_domain_cache.json`) stores XBRL metrics per domain group (aristocrats, kings, quality) to avoid re-scraping unchanged ticker lists. A **7-day TTL** ensures periodic freshness even when ticker lists haven't changed:
+
+| Check | Condition | Action |
+|---|---|---|
+| Ticker list changed | Diff detected | Full re-scrape (always) |
+| `cached_at` missing | Old cache format | Force re-scrape |
+| TTL expired (>7 days) | Age check | Force re-scrape |
+| Cache valid | Same tickers + within TTL | Use cached data |
+
+### Pipeline Checkpoint
+
+Every full pipeline run saves a checkpoint to `.funnel_checkpoint.json` containing all intermediate state: tickers, screen results, EA results, MiMo classifications, scores, position sizing, prices, and macro regime. MiMo results are also saved in human-readable form to `mimo_results.txt`.
+
+**`--from-checkpoint`** regenerates the HTML report instantly from the saved checkpoint — no EDGAR scraping, no API calls, no MiMo classification. This is the recommended way to iterate on HTML styling or regenerate reports after code changes.
+
 ---
 
 ## Scoring Model
@@ -201,6 +218,8 @@ Sub-models: `DipTriggerCfg` · `EntryAttractivenessCfg` · `KivCfg` · `ScoringW
 | `--max-concurrent` | `2` | Max concurrent MiMo batch chunks |
 | `--use-db` | `false` | Enable PostgreSQL persistence |
 | `--skip-mimo` | `false` | Skip MiMo classification (Stage 2→3) |
+| `--output-html` | (none) | Generate HTML report at specified path |
+| `--from-checkpoint` | `false` | Regenerate HTML from last checkpoint (skip full pipeline) |
 
 ---
 
@@ -321,6 +340,12 @@ PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --max-concurr
 
 # With PostgreSQL persistence
 PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --use-db
+
+# Generate HTML report
+PYTHONPATH=src python scripts/run_funnel.py --portfolio-myr 500000 --output-html docs/index.html
+
+# Regenerate HTML from last checkpoint (instant, no re-run)
+PYTHONPATH=src python scripts/run_funnel.py --from-checkpoint --output-html docs/index.html
 
 # Gate test: validate MiMo batch before full universe run
 PYTHONPATH=src python scripts/test_mimo_batch.py --stocks KO JNJ PG MSFT ACN --batch-size 5
