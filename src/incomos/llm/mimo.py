@@ -472,7 +472,49 @@ Rules:
 - Include exactly one object per input stock.
 - confidence must be 0.0-1.0.
 - evidence_summary min 10 chars, transience_argument min 5 chars.
-- Do NOT copy the examples; classify based on the actual data provided."""
+- Do NOT copy the examples; classify based on the actual data provided.
+- UNKNOWN is a last resort. Use only when filing text contains literally no operational or financial detail. Generic MD&A still has signals — look for them.
+- STRUCTURAL and STRUCTURAL_MACRO_EXPOSED require evidence of PERMANENT business model impairment. Regulatory dependency, rate proceedings, and infrastructure investment in regulated utilities are NOT structural impairment — they are normal business operations.
+
+### Few-shot examples ###
+
+Example 1 — TRANSIENT
+Stock: DEF  Macro: Rates rising moderately
+MD&A: Revenue grew 8% YoY driven by new product lines. One-time legal settlement of $120M depressed net income this quarter. Core operating margins expanded 60 bps.
+Risk factors (current vs prior): Unchanged — litigation risk removed after settlement.
+Expected: {"ticker":"DEF","classification":"TRANSIENT","confidence":0.82,"evidence_summary":"One-time legal charge caused the dip; underlying business is healthy.","key_risks":["none material"],"transience_argument":"Settlement removes the overhang; earnings will normalise next quarter.","structural_flags":[]}
+
+Example 2 — STRUCTURAL
+Stock: GHI  Macro: Rates elevated
+MD&A: Revenue declined 18% YoY as key product line faces permanent commoditisation. Gross margin compressed from 52% to 31%. Management is unable to identify a path back to prior margin levels. Customer churn accelerated.
+Risk factors (current vs prior): New risk added: 'Inability to compete with lower-cost alternatives may permanently impair our business model.'
+Expected: {"ticker":"GHI","classification":"STRUCTURAL","confidence":0.91,"evidence_summary":"Permanent commoditisation and margin collapse indicate structural impairment.","key_risks":["commoditisation","customer churn"],"transience_argument":"No credible path to margin recovery described.","structural_flags":["margin collapse","commoditisation risk added"]}
+
+Example 3 — CYCLICAL_IDIOSYNCRATIC
+Stock: JKL  Macro: Mild slowdown
+MD&A: Revenue down 12% due to inventory de-stocking by major retailers following a demand spike in the prior year. Long-term demand for the product category is intact. Management expects normalisation within 2-3 quarters.
+Risk factors (current vs prior): No new structural risks added.
+Expected: {"ticker":"JKL","classification":"CYCLICAL_IDIOSYNCRATIC","confidence":0.79,"evidence_summary":"De-stocking cycle is the driver; category demand intact.","key_risks":["re-stocking timing uncertain"],"transience_argument":"Inventory cycles typically resolve in 2-3 quarters; no structural damage.","structural_flags":[]}
+
+Example 4 — CYCLICAL_MACRO (mixed geopolitical + demand signals)
+Stock: MNO  Macro: RANGING, mild growth slowdown
+MD&A: Systemwide comparable sales declined 1% driven by a 4% decline in international markets, primarily China and the Middle East. US comparable sales were flat. The company is investing in value menu and digital ordering to recover traffic. Long-term franchise economics remain intact with 95% franchised model.
+Risk factors (current vs prior): New risk added: 'Consumer boycotts and geopolitical tensions in certain international markets may continue to pressure comparable sales.' Prior year had no geopolitical risk language.
+Expected: {"ticker":"MNO","classification":"CYCLICAL_MACRO","confidence":0.70,"evidence_summary":"China/Middle East demand weakness is geopolitical and cyclical, not structural. US business flat. Franchise model intact.","key_risks":["China recovery timing","Middle East boycott duration"],"transience_argument":"Geopolitical boycotts are transient events; franchise economics are not impaired. US value menu investments should restore traffic.","structural_flags":[]}
+
+Example 5 — CYCLICAL_IDIOSYNCRATIC (segment weakness that looks structural but isn't)
+Stock: PQR  Macro: EXPANSION
+MD&A: Revenue declined 8% YoY driven by a 22% decline in the China segment due to government hospital spending cuts and a voluntary product recall affecting two product lines. Excluding China and the recalled products, revenue grew 3%. The diabetes and cardiovascular segments grew 5% and 2% respectively. Management reaffirmed full-year guidance excluding China headwinds.
+Risk factors (current vs prior): New risk: 'Government healthcare spending austerity in China may persist through FY2026.' Risk on product quality was already present in prior year.
+Expected: {"ticker":"PQR","classification":"CYCLICAL_IDIOSYNCRATIC","confidence":0.68,"evidence_summary":"China spending cuts and product recall are idiosyncratic. Core segments growing. Management guidance intact ex-China.","key_risks":["China spending cuts duration","recall resolution timeline"],"transience_argument":"China austerity is a government budget cycle issue, not permanent. Recall is a transient quality event. Core franchise growth confirms business health.","structural_flags":[]}
+
+Example 6 — CYCLICAL_IDIOSYNCRATIC (regulated utility — NOT structural)
+Stock: STU  Macro: RANGING
+MD&A: Rate base grew 7% driven by infrastructure investment in natural gas distribution and pipeline safety. Pending rate cases in two jurisdictions create near-term revenue uncertainty. Capital expenditure increased 12% for pipe replacement and modernization. Long-term regulatory framework remains supportive with allowed ROE of 9.5-10.5%.
+Risk factors (current vs prior): 'Regulatory changes may affect allowed returns' and 'Pipeline safety requirements may increase capital expenditure' — both present in prior year, unchanged. New risk: 'Interest rate increases may raise cost of debt financing.'
+Expected: {"ticker":"STU","classification":"CYCLICAL_IDIOSYNCRATIC","confidence":0.72,"evidence_summary":"Regulated utility with normal rate case cycle. Infrastructure investment is ongoing regulatory requirement, not structural impairment. Rate base growth and allowed ROE framework intact.","key_risks":["rate case outcomes","interest rate impact on cost of debt"],"transience_argument":"Rate proceedings are a normal part of regulated utility operations — they recur cyclically. Pipeline safety investment is mandated and recoverable through rates. No permanent business model impairment.","structural_flags":[]}
+
+### End of examples ###"""
 
 
 def _build_stock_block(

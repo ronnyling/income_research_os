@@ -783,11 +783,73 @@ def run_funnel(tickers: list[str], portfolio_myr: float, use_db: bool = False, o
             for ticker, mr in sorted(mimo_results.items()):
                 cls = mr.get('classification', '?')
                 conf = mr.get('confidence', 0)
-                reason = mr.get('reasoning', '')[:120]
-                f.write(f"{ticker:8s}  {cls:25s}  conf={conf:.2f}  {reason}\n")
+                evidence = mr.get('evidence_summary', '')[:200]
+                risks = mr.get('key_risks', [])
+                flags = mr.get('structural_flags', [])
+                transience = mr.get('transience_argument', '')[:150]
+                f.write(f"{ticker:8s}  {cls:30s}  conf={conf:.2f}\n")
+                if evidence:
+                    f.write(f"          Evidence: {evidence}\n")
+                if risks:
+                    f.write(f"          Risks: {', '.join(risks)}\n")
+                if flags:
+                    f.write(f"          Flags: {', '.join(flags)}\n")
+                if transience:
+                    f.write(f"          Transience: {transience}\n")
+                f.write("\n")
         console.print(f"[dim]MiMo results saved to {mimo_txt_path}[/dim]")
     except Exception as exc:
         logger.warning("Failed to save MiMo results text: %s", exc)
+
+    # Also save MiMo review file — anomalies only for maintenance review
+    mimo_review_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "mimo_review.md")
+    try:
+        _anomalies = []
+        for ticker, mr in sorted(mimo_results.items()):
+            cls = mr.get('classification', '?')
+            conf = mr.get('confidence', 0)
+            flags = mr.get('structural_flags', [])
+            reasons = []
+            if cls == 'UNKNOWN':
+                reasons.append('UNKNOWN classification — possible data quality issue')
+            if cls in ('STRUCTURAL', 'STRUCTURAL_MACRO_EXPOSED'):
+                reasons.append(f'{cls} — verify permanent impairment')
+            if conf < 0.60:
+                reasons.append(f'Low confidence ({conf:.2f})')
+            if flags:
+                reasons.append(f'Structural flags: {", ".join(flags)}')
+            if reasons:
+                _anomalies.append((ticker, mr, reasons))
+        if _anomalies:
+            with open(mimo_review_path, "w", encoding="utf-8") as f:
+                f.write(f"# MiMo Review — Action Required\n\n")
+                f.write(f"Generated: {datetime.now(timezone.utc).isoformat()}\n\n")
+                f.write(f"Anomalies detected: **{len(_anomalies)}** of {len(mimo_results)} classified stocks\n\n")
+                f.write(f"Criteria: UNKNOWN, STRUCTURAL/STRUCTURAL_MACRO_EXPOSED, confidence < 0.60, or structural flags present\n\n")
+                f.write(f"---\n\n")
+                for ticker, mr, reasons in _anomalies:
+                    cls = mr.get('classification', '?')
+                    conf = mr.get('confidence', 0)
+                    evidence = mr.get('evidence_summary', '')
+                    risks = mr.get('key_risks', [])
+                    flags = mr.get('structural_flags', [])
+                    transience = mr.get('transience_argument', '')
+                    f.write(f"## {ticker} — {cls} (conf={conf:.2f})\n\n")
+                    f.write(f"**Why flagged:**\n")
+                    for r in reasons:
+                        f.write(f"- {r}\n")
+                    f.write(f"\n**Evidence:** {evidence}\n\n")
+                    if risks:
+                        f.write(f"**Key risks:** {', '.join(risks)}\n\n")
+                    if flags:
+                        f.write(f"**Structural flags:** {', '.join(flags)}\n\n")
+                    f.write(f"**Transience argument:** {transience}\n\n")
+                    f.write(f"---\n\n")
+            console.print(f"[dim]MiMo review saved to {mimo_review_path}[/dim]")
+        else:
+            console.print("[dim]No MiMo anomalies — review file not generated[/dim]")
+    except Exception as exc:
+        logger.warning("Failed to save MiMo review: %s", exc)
 
     # ---- HTML report output -------------------------------------------
     if output_html:
@@ -930,6 +992,16 @@ def _generate_html_report(
 
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
+    # Tag descriptions for tooltips
+    TAG_TOOLTIPS = {
+        "DEEP_DIP": "Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.",
+        "DIP": "Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.",
+        "YIELD_EXPANSION": "Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.",
+        "DIVIDEND_GROWTH": "Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.",
+        "UNDERVALUED": "Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.",
+        "TRENDING_DOWN": "Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.",
+    }
+
     # Build rows
     kiv_rows = []
     prospect_rows = []
@@ -957,12 +1029,24 @@ def _generate_html_report(
         tags = ", ".join(ea.tags[:3]) if ea and ea.tags else "-"
         dip_pct = "-"
         rsi_val = "-"
+        cur_yield = "-"
+        yld_exp = "-"
         if snap:
             try:
-                dip_pct = f"{snap.drawdown_pct:.1f}%" if hasattr(snap, 'drawdown_pct') and snap.drawdown_pct else "-"
-                rsi_val = f"{snap.rsi:.1f}" if hasattr(snap, 'rsi') and snap.rsi else "-"
+                dip_pct = f"{snap.pct_below_52w_high*100:.1f}%" if snap.pct_below_52w_high else "-"
+                rsi_val = f"{snap.rsi_14:.1f}" if snap.rsi_14 else "-"
+                if snap.current_yield:
+                    cur_yield = f"{snap.current_yield*100:.2f}%"
+                if snap.yield_expansion_ratio:
+                    yld_exp = f"{snap.yield_expansion_ratio:.2f}x"
             except Exception:
                 pass
+
+        # MiMo details for popup
+        mimo_ev = mimo.get("evidence_summary", "") if mimo else ""
+        mimo_risks = mimo.get("key_risks", []) if mimo else []
+        mimo_flags = mimo.get("structural_flags", []) if mimo else []
+        mimo_trans = mimo.get("transience_argument", "") if mimo else ""
 
         if sc:
             iq = f"{sc.income_quality:.1f}"
@@ -978,14 +1062,16 @@ def _generate_html_report(
             iq = bq = dq = oc = comp = mult = size = mimo_class = mimo_conf = "-"
 
         if ea and ea.meets_floor and sc:
-            kiv_rows.append((ticker, ea_score, dip_pct, rsi_val, tags, mimo_class, mimo_conf, iq, bq, dq, oc, comp, mult, size))
+            kiv_rows.append((ticker, ea_score, dip_pct, rsi_val, cur_yield, yld_exp,
+                             tags, mimo_class, mimo_conf, comp, mult, size,
+                             iq, bq, dq, oc, mimo_ev, mimo_risks, mimo_flags, mimo_trans))
         elif ea:
             prospect_rows.append((ticker, ea_score, dip_pct, rsi_val, tags))
         else:
             prospect_rows.append((ticker, "-", "-", "-", "-"))
 
-    # Sort KIV by composite score descending (index 11 = comp)
-    kiv_rows.sort(key=lambda r: float(r[11]) if r[11] != "-" else 0, reverse=True)
+    # Sort KIV by composite score descending (index 9 = comp)
+    kiv_rows.sort(key=lambda r: float(r[9]) if r[9] != "-" else 0, reverse=True)
 
     # Macro regime
     macro_market = str(macro.market_structure.state).split(".")[-1] if macro else "-"
@@ -998,9 +1084,9 @@ def _generate_html_report(
     total_prospects = len(prospect_rows)
     total_rejected = len(rejected_rows)
 
-    # Score distribution (comp is index 11)
-    scored = [r for r in kiv_rows if r[11] != "-"]
-    avg_score = sum(float(r[11]) for r in scored) / len(scored) if scored else 0
+    # Score distribution (comp is index 9)
+    scored = [r for r in kiv_rows if r[9] != "-"]
+    avg_score = sum(float(r[9]) for r in scored) / len(scored) if scored else 0
     usd_myr_str = f"{usd_myr:.4f}" if usd_myr else "-"
 
     # Build HTML
@@ -1041,7 +1127,31 @@ def _generate_html_report(
   .score-low {{ color: var(--muted); }}
   .tag {{ display: inline-block; background: rgba(88,166,255,0.12); color: var(--accent);
           border-radius: 4px; padding: 0.1rem 0.4rem; font-size: 0.7rem; margin: 0.1rem; }}
+  .tag-red {{ background: rgba(248,81,73,0.12); color: var(--red); }}
+  .tag-yellow {{ background: rgba(210,153,34,0.12); color: var(--yellow); }}
   .rejected-note {{ color: var(--muted); font-size: 0.8rem; }}
+  /* Tooltip on th */
+  th {{ position: relative; cursor: default; }}
+  th .tip {{ display:none; position:absolute; left:0; top:100%; z-index:10;
+             background:var(--card); border:1px solid var(--border); border-radius:6px;
+             padding:0.5rem 0.7rem; font-size:0.75rem; color:var(--text);
+             white-space:normal; width:220px; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,0.4);
+             text-transform:none; letter-spacing:0; font-weight:400; }}
+  th:hover .tip {{ display:block; }}
+  /* Expandable details row */
+  .detail-toggle {{ cursor:pointer; color:var(--accent); text-decoration:none; }}
+  .detail-toggle:hover {{ text-decoration:underline; }}
+  .detail-row {{ display:none; }}
+  .detail-row.open {{ display:table-row; }}
+  .detail-cell {{ background:rgba(22,27,34,0.6); padding:1rem 1.2rem; }}
+  .detail-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; }}
+  .detail-section h4 {{ color:var(--accent); font-size:0.8rem; margin-bottom:0.3rem; }}
+  .detail-section p {{ font-size:0.82rem; color:var(--muted); line-height:1.5; }}
+  .detail-section .risk-tag {{ display:inline-block; font-size:0.72rem; padding:0.1rem 0.4rem;
+             border-radius:4px; margin:0.1rem; background:rgba(248,81,73,0.1); color:var(--red); }}
+  .detail-section .flag-tag {{ display:inline-block; font-size:0.72rem; padding:0.1rem 0.4rem;
+             border-radius:4px; margin:0.1rem; background:rgba(210,153,34,0.1); color:var(--yellow); }}
+  .score-bar {{ height:4px; border-radius:2px; margin-top:0.3rem; }}
   .footer {{ margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border);
              color: var(--muted); font-size: 0.75rem; text-align: center; }}
   .macro-pills {{ display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }}
@@ -1049,6 +1159,12 @@ def _generate_html_report(
            padding: 0.3rem 0.8rem; font-size: 0.8rem; }}
   .pill .axis {{ color: var(--muted); font-size: 0.7rem; }}
 </style>
+<script>
+function toggleDetail(id) {{
+  var row = document.getElementById(id);
+  if (row) row.classList.toggle('open');
+}}
+</script>
 </head>
 <body>
 <div class="container">
@@ -1076,28 +1192,164 @@ def _generate_html_report(
 <h2>🎯 KIV Basket ({total_kiv} stocks)</h2>
 <table>
 <thead><tr>
-  <th>#</th><th>Ticker</th><th>EA</th><th>Dip%</th><th>RSI</th><th>Tags</th>
-  <th>MiMo Class</th><th>Conf</th><th>IQ</th><th>BQ</th><th>DQ</th><th>OC</th>
-  <th>Score</th><th>Mult</th><th>Size (MYR)</th>
+  <th>#</th>
+  <th>Ticker<span class="tip">Stock ticker symbol. Click to expand full due-diligence breakdown including Income/Business/Dip Quality scores, MiMo evidence, risks, and structural flags.</span></th>
+  <th>EA<span class="tip">Early-Attraction composite score (0–100). Rule-based Stage 1→2 screen combining yield expansion, FCF quality, payout ratio, and ROIC. Higher = more attractive income opportunity.</span></th>
+  <th>Dip%<span class="tip">Current price drawdown from 52-week high. Measures how far the stock has pulled back from its peak. Deeper dips offer better entry yields — but must be transient, not structural.</span></th>
+  <th>RSI<span class="tip">14-day Relative Strength Index (0–100). Below 30 = oversold territory (potential entry signal). Between 30–50 = moderate weakness. Above 70 = overbought (avoid entry).</span></th>
+  <th>Yield%<span class="tip">Current trailing dividend yield. Annual dividend per share ÷ current price × 100. Higher yield at purchase = higher income on cost basis.</span></th>
+  <th>Yld Exp<span class="tip">Yield Expansion Ratio = current yield ÷ 5-year average yield. Above 1.0 means the stock yields more than its historical average — a potential value signal indicating price has fallen relative to its dividend.</span></th>
+  <th>Tags<span class="tip">Funnel lifecycle tags: DIP_TRIGGER (price entry signal), PROMOTED (advanced to KIV), REJECTED (failed screening). Multiple tags possible.</span></th>
+  <th>MiMo Class<span class="tip">MiMo 2.5 dip classification: TRANSIENT (temporary, likely recovery), CYCLICAL_MACRO (macro-driven cycle), CYCLICAL_IDIOSYNCRATIC (company-specific cycle), STRUCTURAL (permanent impairment — avoid). See Details for full reasoning.</span></th>
+  <th>Conf<span class="tip">MiMo classification confidence (0.0–1.0). Higher = more certain. Below 0.60 signals data quality or ambiguity issues — review Details before acting. ≥0.85 = high conviction.</span></th>
+  <th>Score<span class="tip">Composite Opportunity Score = 0.30×Income Quality + 0.30×Business Quality + 0.30×Dip Quality + 0.10×Oversold Confidence. All inputs 0–100. Score ≥80 → 1.2× position size. Score &lt;60 → 0.6× size.</span></th>
+  <th>Mult<span class="tip">Position size multiplier derived from Score. &lt;60 → 0.6×, 60–79 → 1.0×, ≥80 → 1.2×. Human annotation override can increase to 1.5×.</span></th>
+  <th>Size (MYR)<span class="tip">Recommended position size in MYR = base_size × multiplier. Capped at 15% of total portfolio to prevent concentration risk.</span></th>
 </tr></thead>
 <tbody>
 """
 
     for i, row in enumerate(kiv_rows, 1):
-        ticker, ea_s, dip, rsi, tags, mm_class, mm_conf, iq, bq, dq, oc, comp, mult, size = row
+        ticker, ea_s, dip, rsi, cur_yield, yld_exp, tags, mm_class, mm_conf, comp, mult, size, \
+            iq, bq, dq, oc, mimo_ev, mimo_risks, mimo_flags, mimo_trans = row
         score_val = float(comp) if comp != "-" else 0
         score_cls = "score-high" if score_val >= 70 else ("score-mid" if score_val >= 60 else "score-low")
-        tags_html = "".join(f'<span class="tag">{t.strip()}</span>' for t in tags.split(",") if t.strip() != "-")
+        tags_html = "".join(
+            f'<span class="tag" title="{TAG_TOOLTIPS.get(t.strip(), t.strip())}">{t.strip()}</span>'
+            for t in tags.split(",") if t.strip() != "-"
+        )
+
+        # MiMo class colour
+        mm_cls_html = mm_class
+        if "STRUCTURAL" in str(mm_class):
+            mm_cls_html = f'<span style="color:var(--red)">{mm_class}</span>'
+        elif "UNKNOWN" in str(mm_class):
+            mm_cls_html = f'<span style="color:var(--yellow)">{mm_class}</span>'
+        elif "TRANSIENT" in str(mm_class):
+            mm_cls_html = f'<span style="color:var(--green)">{mm_class}</span>'
+
+        # Confidence colour
+        conf_val = float(mm_conf) if mm_conf not in ("-", "") else 0
+        if conf_val >= 0.80:
+            conf_html = f'<span style="color:var(--green)">{mm_conf}</span>'
+        elif conf_val >= 0.60:
+            conf_html = f'<span style="color:var(--yellow)">{mm_conf}</span>'
+        else:
+            conf_html = f'<span style="color:var(--red)">{mm_conf}</span>'
+
+        # Score bar (0-100)
+        bar_color = "var(--green)" if score_val >= 70 else ("var(--yellow)" if score_val >= 60 else "var(--muted)")
+        bar_html = f'<div class="score-bar" style="width:{score_val}%;background:{bar_color}"></div>' if score_val > 0 else ""
+
+        # Risks and flags as tags
+        risks_html = ""
+        if mimo_risks and mimo_risks != "-":
+            if isinstance(mimo_risks, list):
+                risks_html = "".join(f'<span class="risk-tag">{r.strip()}</span>' for r in mimo_risks if str(r).strip())
+            else:
+                risks_html = "".join(f'<span class="risk-tag">{r.strip()}</span>' for r in str(mimo_risks).split(" | ") if r.strip())
+        flags_html = ""
+        if mimo_flags and mimo_flags != "-":
+            if isinstance(mimo_flags, list):
+                flags_html = "".join(f'<span class="flag-tag">{f.strip()}</span>' for f in mimo_flags if str(f).strip())
+            else:
+                flags_html = "".join(f'<span class="flag-tag">{f.strip()}</span>' for f in str(mimo_flags).split(" | ") if f.strip())
+
         html += f"""<tr>
-  <td>{i}</td><td><strong>{ticker}</strong></td><td>{ea_s}</td><td>{dip}</td><td>{rsi}</td>
+  <td>{i}</td>
+  <td><a class="detail-toggle" onclick="toggleDetail('detail-{i}')">{ticker}</a></td>
+  <td>{ea_s}</td><td>{dip}</td><td>{rsi}</td><td>{cur_yield}</td><td>{yld_exp}</td>
   <td>{tags_html if tags_html else '-'}</td>
-  <td>{mm_class}</td><td>{mm_conf}</td><td>{iq}</td><td>{bq}</td><td>{dq}</td><td>{oc}</td>
-  <td class="{score_cls}">{comp}</td><td>{mult}</td><td><strong>{size}</strong></td>
+  <td>{mm_cls_html}</td><td>{conf_html}</td>
+  <td class="{score_cls}">{comp}{bar_html}</td><td>{mult}</td><td><strong>{size}</strong></td>
+</tr>
+<tr class="detail-row" id="detail-{i}">
+  <td colspan="13" class="detail-cell">
+    <div class="detail-grid">
+      <div class="detail-section">
+        <h4>📐 Quality Scores</h4>
+        <p>Income Quality: <strong>{iq}</strong> · Business Quality: <strong>{bq}</strong><br>
+           Dip Quality: <strong>{dq}</strong> · Oversold Confidence: <strong>{oc}</strong></p>
+        <p style="margin-top:0.4rem;font-size:0.75rem">
+           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">{comp}</strong>
+        </p>
+      </div>
+      <div class="detail-section">
+        <h4>🧠 MiMo Classification</h4>
+        <p><strong>{mm_class}</strong> at confidence <strong>{mm_conf}</strong></p>
+        <p style="margin-top:0.3rem">{mimo_ev if mimo_ev and mimo_ev != "-" else "No evidence recorded."}</p>
+      </div>
+      <div class="detail-section">
+        <h4>⚠️ Key Risks</h4>
+        <p>{risks_html if risks_html else '<span style="color:var(--muted)">No specific risks flagged.</span>'}</p>
+      </div>
+      <div class="detail-section">
+        <h4>🏁 Transience Argument</h4>
+        <p>{mimo_trans if mimo_trans and mimo_trans != "-" else "No transience reasoning recorded."}</p>
+        {f'<div style="margin-top:0.3rem"><strong style="color:var(--yellow);font-size:0.75rem">Structural Flags:</strong> {flags_html}</div>' if flags_html else ''}
+      </div>
+    </div>
+  </td>
 </tr>
 """
 
     html += """</tbody></table>
+"""
 
+    # ---- MiMo Review Panel: anomalies only ----
+    _review_anomalies = []
+    for ticker in tickers:
+        mimo = mimo_results.get(ticker)
+        if not mimo:
+            continue
+        cls = mimo.get("classification", "")
+        conf = mimo.get("confidence", 0)
+        flags = mimo.get("structural_flags", [])
+        evidence = mimo.get("evidence_summary", "")
+        risks = mimo.get("key_risks", [])
+        transience = mimo.get("transience_argument", "")
+        reasons = []
+        if cls == "UNKNOWN":
+            reasons.append("UNKNOWN classification — possible data quality issue")
+        if cls in ("STRUCTURAL", "STRUCTURAL_MACRO_EXPOSED"):
+            reasons.append(f"{cls} — verify permanent impairment")
+        if conf < 0.60:
+            reasons.append(f"Low confidence ({conf:.2f})")
+        if flags:
+            reasons.append(f"Structural flags: {', '.join(flags)}")
+        if reasons:
+            _review_anomalies.append({
+                "ticker": ticker, "classification": cls, "confidence": conf,
+                "reasons": reasons, "evidence": evidence, "risks": risks,
+                "transience": transience, "flags": flags,
+            })
+
+    if _review_anomalies:
+        html += """<h2>⚠️ MiMo Review — Action Required</h2>
+<p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem">
+  Stocks with unexpected classifications, low confidence, or structural flags that need human review.
+</p>
+"""
+        for a in _review_anomalies:
+            conf_color = "var(--red)" if a["confidence"] < 0.55 else ("var(--yellow)" if a["confidence"] < 0.70 else "var(--green)")
+            reason_html = "".join(f'<li>{r}</li>' for r in a["reasons"])
+            risk_html = "".join(f'<span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">{r}</span>' for r in a["risks"]) if a["risks"] else '<span style="color:var(--muted)">—</span>'
+            flag_html = "".join(f'<span class="tag" style="background:rgba(210,153,34,0.12);color:var(--yellow)">{f}</span>' for f in a["flags"]) if a["flags"] else '<span style="color:var(--muted)">—</span>'
+            html += f"""<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid {conf_color};
+                     border-radius:8px;padding:1rem;margin-bottom:1rem">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+    <strong style="font-size:1.1rem">{a["ticker"]}</strong>
+    <span style="color:{conf_color};font-weight:700">{a["classification"]} ({a["confidence"]:.2f})</span>
+  </div>
+  <ul style="margin:0.3rem 0 0.6rem 1.2rem;font-size:0.85rem;color:var(--yellow)">{reason_html}</ul>
+  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem"><strong>Evidence:</strong> {a["evidence"]}</div>
+  <div style="font-size:0.82rem;margin-bottom:0.3rem"><strong>Key risks:</strong> {risk_html}</div>
+  <div style="font-size:0.82rem"><strong>Structural flags:</strong> {flag_html}</div>
+  <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem"><strong>Transience:</strong> {a["transience"]}</div>
+</div>
+"""
+
+    html += """
 <h2>📋 Prospects (below KIV threshold)</h2>
 <table>
 <thead><tr><th>Ticker</th><th>EA Score</th><th>Dip%</th><th>RSI</th><th>Tags</th></tr></thead>
@@ -1106,7 +1358,10 @@ def _generate_html_report(
 
     for row in prospect_rows:
         ticker, ea_s, dip, rsi, tags = row
-        tags_html = "".join(f'<span class="tag">{t.strip()}</span>' for t in tags.split(",") if t.strip() != "-")
+        tags_html = "".join(
+            f'<span class="tag" title="{TAG_TOOLTIPS.get(t.strip(), t.strip())}">{t.strip()}</span>'
+            for t in tags.split(",") if t.strip() != "-"
+        )
         html += f"<tr><td>{ticker}</td><td>{ea_s}</td><td>{dip}</td><td>{rsi}</td><td>{tags_html if tags_html else '-'}</td></tr>\n"
 
     html += """</tbody></table>

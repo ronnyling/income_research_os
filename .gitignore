@@ -21,6 +21,7 @@ data/edgar_tickers.json
 .funnel_checkpoint.json
 .funnel_domain_cache.json
 mimo_results.txt
+mimo_review.md
 
 # Research store local exports
 data/exports/
