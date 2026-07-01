@@ -134,26 +134,26 @@ function toggleDetail(id) {
 <div class="container">
 
 <h1>📊 Income Compounder Research OS</h1>
-<p class="subtitle">Full Universe Beta Results — 2026-06-26 15:25 UTC &middot; Portfolio MYR 500,000 &middot; 329s</p>
+<p class="subtitle">Full Universe Beta Results — 2026-07-01 06:39 UTC &middot; Portfolio MYR 500,000 &middot; 108s</p>
 
 <div class="cards">
   <div class="card"><div class="label">Universe</div><div class="value blue">197</div></div>
-  <div class="card"><div class="label">Prospects</div><div class="value">72</div></div>
-  <div class="card"><div class="label">KIV Basket</div><div class="value yellow">20 / 20</div></div>
+  <div class="card"><div class="label">Prospects</div><div class="value">92</div></div>
+  <div class="card"><div class="label">KIV Basket</div><div class="value yellow">0 / 20</div></div>
   <div class="card"><div class="label">Rejected</div><div class="value" style="color:var(--red)">105</div></div>
-  <div class="card"><div class="label">Avg Score</div><div class="value green">69.1</div></div>
-  <div class="card"><div class="label">USD/MYR</div><div class="value">4.1150</div></div>
+  <div class="card"><div class="label">Avg Score</div><div class="value green">0.0</div></div>
+  <div class="card"><div class="label">USD/MYR</div><div class="value">4.0850</div></div>
 </div>
 
 <h2>🌍 Macro Regime</h2>
 <div class="macro-pills">
-  <div class="pill"><span class="axis">Market</span> LOOSE<span class="pill-tip">Market Structure: Derived from price action — TRENDING_UP (bullish trend), TRENDING_DOWN (bearish), or RANGING (consolidation). Sets the directional bias for dip classification confidence.</span></div>
+  <div class="pill"><span class="axis">Market</span> TRENDING_UP<span class="pill-tip">Market Structure: Derived from price action — TRENDING_UP (bullish trend), TRENDING_DOWN (bearish), or RANGING (consolidation). Sets the directional bias for dip classification confidence.</span></div>
   <div class="pill"><span class="axis">Growth</span> EXPANSION<span class="pill-tip">Growth Regime: Based on NY Fed yield-curve recession probability. EXPANSION = normal growth. RECESSION_RISK = inverted curve signals elevated recession probability within 12 months.</span></div>
   <div class="pill"><span class="axis">Rates</span> STABLE<span class="pill-tip">Rate Environment: From FRED H.15 Treasury yields. STABLE = normal conditions. RATE_SHOCK_UP = rapid rate increase (hurts REITs, utilities). RATE_SHOCK_DOWN = rate cuts (boosts rate-sensitive sectors).</span></div>
   <div class="pill"><span class="axis">FinCond</span> LOOSE<span class="pill-tip">Financial Conditions: From Chicago Fed NFCI/ANFCI index. LOOSE = easy credit, supportive for equities. TIGHTENING = credit contraction — increases risk for leveraged companies and suppresses valuations.</span></div>
 </div>
 
-<h2 id="kiv-basket">🎯 KIV Basket (20 stocks)</h2>
+<h2 id="kiv-basket">🎯 KIV Basket (0 stocks)</h2>
 <table>
 <thead><tr>
   <th>#</th>
@@ -171,856 +171,104 @@ function toggleDetail(id) {
   <th>Size (MYR)<span class="tip">Recommended position size in MYR = base_size × multiplier. Capped at 15% of total portfolio to prevent concentration risk.</span></th>
 </tr></thead>
 <tbody>
-<tr>
-  <td>1</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-1')">MSFT</a></td>
-  <td>81</td><td>31.6%</td><td>28.4</td><td>0.97%</td><td>1.19x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td>
-  <td><span style="color:var(--green)">TRANSIENT</span></td><td><span style="color:var(--green)">0.80</span></td>
-  <td class="score-high">88.0<div class="score-bar" style="width:88.0%;background:var(--green)"></div></td><td>1.2x</td><td><strong>MYR 30,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-1">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>95.0</strong> · Business Quality: <strong>97.0</strong><br>
-           Dip Quality: <strong>80.0</strong> · Oversold Confidence: <strong>64.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">88.0</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>TRANSIENT</strong> at confidence <strong>0.80</strong></p>
-        <p style="margin-top:0.3rem">Strong growth in cloud and AI segments with general IP and reputation risks in an expansionary macro environment.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Intellectual property infringement</span><span class="risk-tag">Brand reputation damage</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Market corrections may be short-lived amid positive fundamentals.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-2')">SCHW</a></td>
-  <td>66</td><td>16.0%</td><td>51.7</td><td>1.32%</td><td>1.06x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_MACRO</td><td><span style="color:var(--green)">0.80</span></td>
-  <td class="score-high">80.0<div class="score-bar" style="width:80.0%;background:var(--green)"></div></td><td>1.2x</td><td><strong>MYR 30,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-2">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>100.0</strong> · Business Quality: <strong>100.0</strong><br>
-           Dip Quality: <strong>60.0</strong> · Oversold Confidence: <strong>20.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">80.0</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_MACRO</strong> at confidence <strong>0.80</strong></p>
-        <p style="margin-top:0.3rem">As a financial services firm, its performance is inherently tied to macroeconomic factors (interest rates, capital markets, investor sentiment) and regulatory environment, which are all currently highlighted as key risks.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Interest rate sensitivity affecting net interest margin and asset values</span><span class="risk-tag">Regulatory and legislative changes impacting business models</span><span class="risk-tag">Market volatility reducing client trading activity and asset balances</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Financial sector profitability and stock valuations are highly cyclical with economic cycles and monetary policy. Current dip aligns with typical macro-driven downturns.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-3')">FDS</a></td>
-  <td>59</td><td>48.6%</td><td>33.4</td><td>1.96%</td><td>1.33x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td>
-  <td><span style="color:var(--green)">TRANSIENT</span></td><td><span style="color:var(--yellow)">0.70</span></td>
-  <td class="score-high">79.1<div class="score-bar" style="width:79.1%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-3">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>92.0</strong> · Business Quality: <strong>75.0</strong><br>
-           Dip Quality: <strong>76.2</strong> · Oversold Confidence: <strong>61.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">79.1</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>TRANSIENT</strong> at confidence <strong>0.70</strong></p>
-        <p style="margin-top:0.3rem">Primary risk factor is cybersecurity and data breach, which is a perpetual operational risk for a data/tech firm. The subscription-based revenue model and critical financial data platform suggest a solid underlying business structure.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Cybersecurity breach leading to data loss and reputational harm</span><span class="risk-tag">Failure to protect sensitive client portfolio data</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Cybersecurity is an ongoing operational cost and risk, not indicative of a broken business model. The dip is likely due to incident-specific news or heightened threat awareness.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-4')">SYK</a></td>
-  <td>58</td><td>17.0%</td><td>65.6</td><td>1.04%</td><td>1.10x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td><span style="color:var(--green)">TRANSIENT_MACRO_AMPLIFIED</span></td><td><span style="color:var(--green)">0.80</span></td>
-  <td class="score-high">77.9<div class="score-bar" style="width:77.9%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-4">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>95.0</strong> · Business Quality: <strong>90.0</strong><br>
-           Dip Quality: <strong>68.0</strong> · Oversold Confidence: <strong>20.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">77.9</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>TRANSIENT_MACRO_AMPLIFIED</strong> at confidence <strong>0.80</strong></p>
-        <p style="margin-top:0.3rem">Tariff risks from US government on imports highlighted in current risk factors, but company shows 11.2% sales growth in 2025.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">tariff impacts</span><span class="risk-tag">geopolitical risks</span><span class="risk-tag">pricing pressures</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Tariff issues may be temporary policy adjustments; underlying business growth remains robust.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-5')">MCHP</a></td>
-  <td>54</td><td>13.7%</td><td>50.3</td><td>2.05%</td><td>0.88x</td>
-  <td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--yellow)">0.70</span></td>
-  <td class="score-high">74.5<div class="score-bar" style="width:74.5%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-5">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>95.0</strong> · Business Quality: <strong>95.0</strong><br>
-           Dip Quality: <strong>53.5</strong> · Oversold Confidence: <strong>14.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">74.5</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.70</strong></p>
-        <p style="margin-top:0.3rem">Large inventory correction in fiscal 2025 followed by recovery; restructuring actions taken.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">global economic conditions</span><span class="risk-tag">geopolitical tensions</span><span class="risk-tag">trade policies</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Recovery underway with increased demand after inventory adjustment.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-6')">FANG</a></td>
-  <td>52</td><td>14.3%</td><td>35.4</td><td>2.28%</td><td>0.75x</td>
-  <td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_MACRO</td><td><span style="color:var(--green)">0.80</span></td>
-  <td class="score-high">74.5<div class="score-bar" style="width:74.5%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-6">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>100.0</strong> · Business Quality: <strong>80.0</strong><br>
-           Dip Quality: <strong>60.0</strong> · Oversold Confidence: <strong>25.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">74.5</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_MACRO</strong> at confidence <strong>0.80</strong></p>
-        <p style="margin-top:0.3rem">Oil and gas reserves subject to price volatility; risk of write-downs if prices decline.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">oil and natural gas price volatility</span><span class="risk-tag">reserve estimation inaccuracies</span><span class="risk-tag">insurance availability</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Commodity prices are cyclical and may recover with macro expansion.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-7')">ICE</a></td>
-  <td>84</td><td>32.3%</td><td>26.4</td><td>1.59%</td><td>1.21x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--yellow)">0.70</span></td>
-  <td class="score-high">72.9<div class="score-bar" style="width:72.9%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-7">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>100.0</strong> · Business Quality: <strong>68.0</strong><br>
-           Dip Quality: <strong>53.5</strong> · Oversold Confidence: <strong>64.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">72.9</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.70</strong></p>
-        <p style="margin-top:0.3rem">MD&A discusses interest rate fluctuations on commercial paper and foreign currency exchange risks affecting revenues and liabilities.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Interest rate risk</span><span class="risk-tag">Foreign currency exchange risk</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Market-based fluctuations may reverse with improving macro conditions.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-8')">ADI</a></td>
-  <td>50</td><td>12.4%</td><td>46.7</td><td>1.07%</td><td>0.79x</td>
-  <td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_MACRO</td><td><span style="color:var(--yellow)">0.60</span></td>
-  <td class="score-high">71.5<div class="score-bar" style="width:71.5%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-8">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>95.0</strong> · Business Quality: <strong>80.0</strong><br>
-           Dip Quality: <strong>57.5</strong> · Oversold Confidence: <strong>18.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">71.5</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_MACRO</strong> at confidence <strong>0.60</strong></p>
-        <p style="margin-top:0.3rem">Significant international operations exposed to trade disputes, tariffs, and geopolitical tensions.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">global political and economic uncertainty</span><span class="risk-tag">trade policy disputes</span><span class="risk-tag">tensions across Taiwan Strait</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Macro risks may ease with improved trade relations and stability.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-9')">ACN</a></td>
-  <td>78</td><td>57.6%</td><td>12.9</td><td>2.44%</td><td>1.11x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--yellow)">0.70</span></td>
-  <td class="score-high">71.2<div class="score-bar" style="width:71.2%;background:var(--green)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-9">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>92.0</strong> · Business Quality: <strong>62.0</strong><br>
-           Dip Quality: <strong>53.5</strong> · Oversold Confidence: <strong>89.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">71.2</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.70</strong></p>
-        <p style="margin-top:0.3rem">Contracts terminable with little penalty, revenue recognition judgments, and risks from employee misconduct and regulatory compliance.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Client attrition risk</span><span class="risk-tag">Regulatory compliance</span><span class="risk-tag">Operational risks</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Risks are addressable through controls and monitoring.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-10')">NKE</a></td>
-  <td>83</td><td>46.8%</td><td>42.1</td><td>3.97%</td><td>1.21x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--green)">0.80</span></td>
-  <td class="score-mid">69.5<div class="score-bar" style="width:69.5%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-10">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>95.0</strong> · Business Quality: <strong>67.0</strong><br>
-           Dip Quality: <strong>54.0</strong> · Oversold Confidence: <strong>47.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">69.5</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.80</strong></p>
-        <p style="margin-top:0.3rem">New tariffs causing material cost increases and negative margin impact, with mitigation actions like inventory liquidation.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Tariff impacts</span><span class="risk-tag">Inventory management</span><span class="risk-tag">Competitive pressures</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Tariff effects may be temporary as company adapts operations.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-11')">ARE</a></td>
-  <td>59</td><td>33.2%</td><td>63.2</td><td>7.31%</td><td>0.99x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_MACRO</td><td><span style="color:var(--yellow)">0.75</span></td>
-  <td class="score-mid">68.8<div class="score-bar" style="width:68.8%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-11">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>80.0</strong> · Business Quality: <strong>80.0</strong><br>
-           Dip Quality: <strong>59.4</strong> · Oversold Confidence: <strong>30.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">68.8</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_MACRO</strong> at confidence <strong>0.75</strong></p>
-        <p style="margin-top:0.3rem">As a REIT, performance is sensitive to macroeconomic conditions (interest rates, credit markets, property valuations) and the operational risks of real estate ownership (leasing, costs, illiquidity). Current risks emphasize financing, leasing, and dividend sustainability.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Rising interest rates increasing borrowing costs and reducing property valuations</span><span class="risk-tag">Difficulty leasing space or meeting cost expectations</span><span class="risk-tag">Illiquidity of real estate assets and dependence on capital markets</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Real estate is a classic cyclical sector tied to economic growth, credit conditions, and interest rates. The dip is consistent with macro-driven pressures on REITs.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-12')">ABT</a></td>
-  <td>50</td><td>29.3%</td><td>61.1</td><td>2.57%</td><td>1.19x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td><span style="color:var(--green)">TRANSIENT</span></td><td><span style="color:var(--red)">0.50</span></td>
-  <td class="score-mid">67.8<div class="score-bar" style="width:67.8%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-12">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>83.0</strong> · Business Quality: <strong>67.0</strong><br>
-           Dip Quality: <strong>68.8</strong> · Oversold Confidence: <strong>22.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">67.8</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>TRANSIENT</strong> at confidence <strong>0.50</strong></p>
-        <p style="margin-top:0.3rem">Healthcare company with growth in 2025 and strategic acquisition planned; no evident fundamental issues.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">integration risks from acquisition</span><span class="risk-tag">regulatory approvals</span><span class="risk-tag">market competition</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Decline likely due to market reaction to acquisition or temporary sector rotation.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-13')">MCD</a></td>
-  <td>66</td><td>19.7%</td><td>40.7</td><td>2.72%</td><td>1.04x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td><span style="color:var(--yellow)">UNKNOWN</span></td><td><span style="color:var(--red)">0.50</span></td>
-  <td class="score-mid">65.8<div class="score-bar" style="width:65.8%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-13">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>87.0</strong> · Business Quality: <strong>73.0</strong><br>
-           Dip Quality: <strong>50.0</strong> · Oversold Confidence: <strong>28.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">65.8</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>UNKNOWN</strong> at confidence <strong>0.50</strong></p>
-        <p style="margin-top:0.3rem">Provided MD&A and risk factors are generic with no specific operational or financial details indicating decline causes.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span style="color:var(--muted)">No specific risks flagged.</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Insufficient data to determine transience.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-14')">LOW</a></td>
-  <td>64</td><td>21.7%</td><td>62.3</td><td>2.14%</td><td>1.01x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--yellow)">0.65</span></td>
-  <td class="score-mid">63.6<div class="score-bar" style="width:63.6%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-14">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>95.0</strong> · Business Quality: <strong>55.0</strong><br>
-           Dip Quality: <strong>53.2</strong> · Oversold Confidence: <strong>26.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">63.6</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.65</strong></p>
-        <p style="margin-top:0.3rem">The company operates in the home improvement retail sector, which faces cyclicality tied to housing markets and consumer discretionary spending. Key risks cited are about adapting to changing consumer habits and competitive differentiation.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Inability to adapt to evolving retail environment and customer demographics</span><span class="risk-tag">Failure to execute on localized merchandising and Pro customer strategy</span><span class="risk-tag">Housing market and consumer spending cycles</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>The retail and housing cycles are inherent to the sector. While the company faces strategic challenges, these are typical idiosyncratic pressures within a cyclical industry, not necessarily a permanent decline.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-15')">GILD</a></td>
-  <td>56</td><td>17.3%</td><td>47.9</td><td>2.53%</td><td>0.92x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--yellow)">0.70</span></td>
-  <td class="score-mid">63.0<div class="score-bar" style="width:63.0%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-15">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>83.0</strong> · Business Quality: <strong>67.0</strong><br>
-           Dip Quality: <strong>53.5</strong> · Oversold Confidence: <strong>20.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">63.0</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.70</strong></p>
-        <p style="margin-top:0.3rem">Revenue dependence on HIV products and pipeline risks in oncology, with competition from generics.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">product dependency</span><span class="risk-tag">generic competition</span><span class="risk-tag">clinical trial outcomes</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Pipeline developments and new therapies could reverse declines as cycles progress.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-16')">CLX</a></td>
-  <td>60</td><td>22.7%</td><td>56.1</td><td>5.10%</td><td>1.08x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td><span style="color:var(--green)">TRANSIENT_MACRO_AMPLIFIED</span></td><td><span style="color:var(--yellow)">0.75</span></td>
-  <td class="score-mid">61.9<div class="score-bar" style="width:61.9%;background:var(--yellow)"></div></td><td>1.0x</td><td><strong>MYR 25,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-16">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>90.0</strong> · Business Quality: <strong>47.0</strong><br>
-           Dip Quality: <strong>61.9</strong> · Oversold Confidence: <strong>22.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">61.9</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>TRANSIENT_MACRO_AMPLIFIED</strong> at confidence <strong>0.75</strong></p>
-        <p style="margin-top:0.3rem">Broad macro risk factors cited (inflation, tariffs, geopolitical instability, supply chain disruptions) amid an expansionary environment, but the business faces specific regulatory, formulation, and sustainability scrutiny that amplify general market pressures.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">Geopolitical instability affecting supply chains</span><span class="risk-tag">Regulatory compliance and product formulation changes</span><span class="risk-tag">Climate and sustainability scrutiny impacting reputation and costs</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>The primary risks cited are external economic and geopolitical factors, which are cyclical or event-driven. While regulatory scrutiny exists, it's presented as a risk factor rather than a current fundamental impairment.</p>
-        <div style="margin-top:0.3rem"><strong style="color:var(--yellow);font-size:0.75rem">Structural Flags:</strong> <span class="flag-tag">Long-term sustainability and regulatory compliance costs could be structurally elevated</span></div>
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-17')">ATO</a></td>
-  <td>56</td><td>9.2%</td><td>63.7</td><td>2.23%</td><td>0.99x</td>
-  <td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td><span style="color:var(--red)">STRUCTURAL_MACRO_EXPOSED</span></td><td><span style="color:var(--yellow)">0.65</span></td>
-  <td class="score-low">59.9<div class="score-bar" style="width:59.9%;background:var(--muted)"></div></td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-17">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>96.0</strong> · Business Quality: <strong>75.0</strong><br>
-           Dip Quality: <strong>27.0</strong> · Oversold Confidence: <strong>5.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">59.9</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>STRUCTURAL_MACRO_EXPOSED</strong> at confidence <strong>0.65</strong></p>
-        <p style="margin-top:0.3rem">Regulatory risks, pipeline safety concerns, and rate proceedings are central to current risk factors.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">regulatory changes</span><span class="risk-tag">pipeline safety</span><span class="risk-tag">rate proceedings</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Some regulatory challenges persist but can be addressed through long-term investments.</p>
-        <div style="margin-top:0.3rem"><strong style="color:var(--yellow);font-size:0.75rem">Structural Flags:</strong> <span class="flag-tag">regulatory dependency</span><span class="flag-tag">infrastructure risks</span></div>
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-18')">TMUS</a></td>
-  <td>57</td><td>28.4%</td><td>56.5</td><td>2.16%</td><td>1.20x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td>CYCLICAL_IDIOSYNCRATIC</td><td><span style="color:var(--yellow)">0.75</span></td>
-  <td class="score-low">58.9<div class="score-bar" style="width:58.9%;background:var(--muted)"></div></td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-18">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>64.0</strong> · Business Quality: <strong>70.0</strong><br>
-           Dip Quality: <strong>53.8</strong> · Oversold Confidence: <strong>26.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">58.9</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_IDIOSYNCRATIC</strong> at confidence <strong>0.75</strong></p>
-        <p style="margin-top:0.3rem">Risk factors detail intense competition from AT&T, Verizon, and cable providers in a saturated wireless market.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">competitive industry</span><span class="risk-tag">pricing pressure</span><span class="risk-tag">market saturation</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Competition cycles may evolve with network innovations and customer loyalty initiatives.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-19')">CPB</a></td>
-  <td>54</td><td>30.4%</td><td>57.4</td><td>6.89%</td><td>1.14x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Current dividend yield exceeds the 5-year average by the configured ratio. Indicates the stock is yielding more than its historical norm — a potential value signal.">YIELD_EXPANSION</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td>
-  <td>CYCLICAL_MACRO</td><td><span style="color:var(--yellow)">0.60</span></td>
-  <td class="score-low">57.4<div class="score-bar" style="width:57.4%;background:var(--muted)"></div></td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-19">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>77.0</strong> · Business Quality: <strong>47.0</strong><br>
-           Dip Quality: <strong>57.5</strong> · Oversold Confidence: <strong>30.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">57.4</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>CYCLICAL_MACRO</strong> at confidence <strong>0.60</strong></p>
-        <p style="margin-top:0.3rem">Elevated cost inflation and tariff impacts expected in 2026, with mitigation plans.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">commodity cost fluctuations</span><span class="risk-tag">tariff impacts</span><span class="risk-tag">consumer behavior shifts</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Management has mitigation strategies to offset cost pressures.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><a class="detail-toggle" onclick="toggleDetail('detail-20')">MDT</a></td>
-  <td>56</td><td>21.2%</td><td>50.2</td><td>3.47%</td><td>1.02x</td>
-  <td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td>
-  <td><span style="color:var(--green)">TRANSIENT_MACRO_AMPLIFIED</span></td><td><span style="color:var(--yellow)">0.70</span></td>
-  <td class="score-low">56.4<div class="score-bar" style="width:56.4%;background:var(--muted)"></div></td><td>0.6x</td><td><strong>MYR 15,000</strong></td>
-</tr>
-<tr class="detail-row" id="detail-20">
-  <td colspan="13" class="detail-cell">
-    <div class="detail-grid">
-      <div class="detail-section">
-        <h4>📐 Quality Scores</h4>
-        <p>Income Quality: <strong>80.0</strong> · Business Quality: <strong>35.0</strong><br>
-           Dip Quality: <strong>65.8</strong> · Oversold Confidence: <strong>22.0</strong></p>
-        <p style="margin-top:0.4rem;font-size:0.75rem">
-           Score formula: 0.30×IQ + 0.30×BQ + 0.30×DQ + 0.10×OC = <strong style="color:var(--green)">56.4</strong>
-        </p>
-      </div>
-      <div class="detail-section">
-        <h4>🧠 MiMo Classification</h4>
-        <p><strong>TRANSIENT_MACRO_AMPLIFIED</strong> at confidence <strong>0.70</strong></p>
-        <p style="margin-top:0.3rem">Current risk factors emphasize trade regulations, tariff changes, and anti-boycott laws affecting international operations.</p>
-      </div>
-      <div class="detail-section">
-        <h4>⚠️ Key Risks</h4>
-        <p><span class="risk-tag">trade regulations</span><span class="risk-tag">tariff changes</span><span class="risk-tag">competitive pressures</span></p>
-      </div>
-      <div class="detail-section">
-        <h4>🏁 Transience Argument</h4>
-        <p>Trade tensions could resolve; operational strategies continue to support performance.</p>
-        
-      </div>
-    </div>
-  </td>
-</tr>
 </tbody></table>
-<h2 id="mimo-review">⚠️ MiMo Review — Action Required</h2>
-<p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem">
-  Stocks with unexpected classifications, low confidence, or structural flags that need human review.
-</p>
-<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--green);
-                     border-radius:8px;padding:1rem;margin-bottom:1rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-    <strong style="font-size:1.1rem">CLX</strong>
-    <span style="color:var(--green);font-weight:700">TRANSIENT_MACRO_AMPLIFIED (0.75)</span>
-  </div>
-  <ul style="margin:0.3rem 0 0.6rem 1.2rem;font-size:0.85rem;color:var(--yellow)"><li>Structural flags: Long-term sustainability and regulatory compliance costs could be structurally elevated</li></ul>
-  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem"><strong>Evidence:</strong> Broad macro risk factors cited (inflation, tariffs, geopolitical instability, supply chain disruptions) amid an expansionary environment, but the business faces specific regulatory, formulation, and sustainability scrutiny that amplify general market pressures.</div>
-  <div style="font-size:0.82rem;margin-bottom:0.3rem"><strong>Key risks:</strong> <span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">Geopolitical instability affecting supply chains</span><span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">Regulatory compliance and product formulation changes</span><span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">Climate and sustainability scrutiny impacting reputation and costs</span></div>
-  <div style="font-size:0.82rem"><strong>Structural flags:</strong> <span class="tag" style="background:rgba(210,153,34,0.12);color:var(--yellow)">Long-term sustainability and regulatory compliance costs could be structurally elevated</span></div>
-  <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem"><strong>Transience:</strong> The primary risks cited are external economic and geopolitical factors, which are cyclical or event-driven. While regulatory scrutiny exists, it's presented as a risk factor rather than a current fundamental impairment.</div>
-</div>
-<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--red);
-                     border-radius:8px;padding:1rem;margin-bottom:1rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-    <strong style="font-size:1.1rem">ABT</strong>
-    <span style="color:var(--red);font-weight:700">TRANSIENT (0.50)</span>
-  </div>
-  <ul style="margin:0.3rem 0 0.6rem 1.2rem;font-size:0.85rem;color:var(--yellow)"><li>Low confidence (0.50)</li></ul>
-  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem"><strong>Evidence:</strong> Healthcare company with growth in 2025 and strategic acquisition planned; no evident fundamental issues.</div>
-  <div style="font-size:0.82rem;margin-bottom:0.3rem"><strong>Key risks:</strong> <span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">integration risks from acquisition</span><span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">regulatory approvals</span><span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">market competition</span></div>
-  <div style="font-size:0.82rem"><strong>Structural flags:</strong> <span style="color:var(--muted)">—</span></div>
-  <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem"><strong>Transience:</strong> Decline likely due to market reaction to acquisition or temporary sector rotation.</div>
-</div>
-<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--yellow);
-                     border-radius:8px;padding:1rem;margin-bottom:1rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-    <strong style="font-size:1.1rem">ATO</strong>
-    <span style="color:var(--yellow);font-weight:700">STRUCTURAL_MACRO_EXPOSED (0.65)</span>
-  </div>
-  <ul style="margin:0.3rem 0 0.6rem 1.2rem;font-size:0.85rem;color:var(--yellow)"><li>STRUCTURAL_MACRO_EXPOSED — verify permanent impairment</li><li>Structural flags: regulatory dependency, infrastructure risks</li></ul>
-  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem"><strong>Evidence:</strong> Regulatory risks, pipeline safety concerns, and rate proceedings are central to current risk factors.</div>
-  <div style="font-size:0.82rem;margin-bottom:0.3rem"><strong>Key risks:</strong> <span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">regulatory changes</span><span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">pipeline safety</span><span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">rate proceedings</span></div>
-  <div style="font-size:0.82rem"><strong>Structural flags:</strong> <span class="tag" style="background:rgba(210,153,34,0.12);color:var(--yellow)">regulatory dependency</span><span class="tag" style="background:rgba(210,153,34,0.12);color:var(--yellow)">infrastructure risks</span></div>
-  <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem"><strong>Transience:</strong> Some regulatory challenges persist but can be addressed through long-term investments.</div>
-</div>
-<div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--red);
-                     border-radius:8px;padding:1rem;margin-bottom:1rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-    <strong style="font-size:1.1rem">MCD</strong>
-    <span style="color:var(--red);font-weight:700">UNKNOWN (0.50)</span>
-  </div>
-  <ul style="margin:0.3rem 0 0.6rem 1.2rem;font-size:0.85rem;color:var(--yellow)"><li>UNKNOWN classification — possible data quality issue</li><li>Low confidence (0.50)</li></ul>
-  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.4rem"><strong>Evidence:</strong> Provided MD&A and risk factors are generic with no specific operational or financial details indicating decline causes.</div>
-  <div style="font-size:0.82rem;margin-bottom:0.3rem"><strong>Key risks:</strong> <span style="color:var(--muted)">—</span></div>
-  <div style="font-size:0.82rem"><strong>Structural flags:</strong> <span style="color:var(--muted)">—</span></div>
-  <div style="font-size:0.82rem;color:var(--muted);margin-top:0.3rem"><strong>Transience:</strong> Insufficient data to determine transience.</div>
-</div>
 
 <h2 id="prospects-table">📋 Prospects (below KIV threshold)</h2>
 <table>
 <thead><tr><th>Ticker</th><th>EA Score</th><th>Dip%</th><th>RSI</th><th>Tags</th></tr></thead>
 <tbody>
-<tr><td>KO</td><td>23</td><td>1.6%</td><td>63.1</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>PG</td><td>43</td><td>9.7%</td><td>56.7</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>CHD</td><td>32</td><td>5.6%</td><td>56.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>ADM</td><td>30</td><td>7.9%</td><td>39.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>TSN</td><td>21</td><td>13.7%</td><td>50.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span></td></tr>
-<tr><td>HRL</td><td>40</td><td>11.7%</td><td>83.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>SJM</td><td>18</td><td>1.0%</td><td>67.3</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>MDLZ</td><td>27</td><td>10.1%</td><td>49.7</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>JNJ</td><td>24</td><td>-</td><td>72.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>BMY</td><td>40</td><td>6.9%</td><td>50.8</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>AMGN</td><td>42</td><td>6.4%</td><td>57.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>MMM</td><td>28</td><td>4.0%</td><td>75.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>ITW</td><td>43</td><td>10.0%</td><td>65.5</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>SWK</td><td>12</td><td>0.4%</td><td>73.1</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>DOV</td><td>9</td><td>2.8%</td><td>60.3</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>NUE</td><td>34</td><td>9.6%</td><td>40.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>PH</td><td>26</td><td>4.7%</td><td>71.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>GPC</td><td>50</td><td>21.6%</td><td>77.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>FAST</td><td>21</td><td>4.6%</td><td>53.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>PPG</td><td>35</td><td>6.6%</td><td>62.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>GD</td><td>16</td><td>4.5%</td><td>51.8</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>CAT</td><td>30</td><td>4.1%</td><td>64.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>DE</td><td>39</td><td>5.3%</td><td>67.2</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>D</td><td>15</td><td>-</td><td>68.1</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>SRE</td><td>26</td><td>5.8%</td><td>61.1</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>XEL</td><td>36</td><td>0.3%</td><td>68.6</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>WEC</td><td>32</td><td>-</td><td>66.1</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>PNW</td><td>22</td><td>-</td><td>68.7</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>TGT</td><td>25</td><td>-</td><td>73.9</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>TJX</td><td>38</td><td>7.0%</td><td>42.4</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>ROST</td><td>44</td><td>11.0%</td><td>34.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>SBUX</td><td>29</td><td>2.0%</td><td>75.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>YUM</td><td>43</td><td>7.3%</td><td>57.2</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>BEN</td><td>17</td><td>2.0%</td><td>64.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>NTRS</td><td>24</td><td>2.0%</td><td>53.3</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>STT</td><td>20</td><td>4.0%</td><td>58.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>INTC</td><td>9</td><td>8.9%</td><td>67.2</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span></td></tr>
-<tr><td>IBM</td><td>46</td><td>18.2%</td><td>40.0</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>APH</td><td>13</td><td>2.0%</td><td>72.4</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>O</td><td>32</td><td>5.5%</td><td>61.8</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>REG</td><td>25</td><td>-</td><td>67.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>LIN</td><td>33</td><td>0.6%</td><td>58.8</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>EMN</td><td>39</td><td>12.4%</td><td>45.7</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>VZ</td><td>36</td><td>8.6%</td><td>55.4</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>CWT</td><td>30</td><td>0.8%</td><td>67.6</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>AAPL</td><td>44</td><td>11.6%</td><td>28.4</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>AVGO</td><td>27</td><td>23.2%</td><td>45.0</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span></td></tr>
-<tr><td>AMAT</td><td>34</td><td>4.7%</td><td>73.3</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>LRCX</td><td>22</td><td>7.4%</td><td>65.4</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>KLAC</td><td>44</td><td>8.7%</td><td>65.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>ABBV</td><td>32</td><td>-</td><td>69.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>CVS</td><td>2</td><td>-</td><td>78.2</td><td>-</td></tr>
-<tr><td>UNH</td><td>26</td><td>-</td><td>69.9</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>HUM</td><td>16</td><td>-</td><td>71.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
-<tr><td>AXP</td><td>49</td><td>10.5%</td><td>83.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>HBAN</td><td>31</td><td>5.7%</td><td>75.1</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>XOM</td><td>42</td><td>19.9%</td><td>26.2</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>EOG</td><td>48</td><td>10.3%</td><td>42.1</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>SLB</td><td>32</td><td>19.1%</td><td>22.1</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>OXY</td><td>29</td><td>23.4%</td><td>24.4</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span></td></tr>
-<tr><td>MPC</td><td>34</td><td>5.0%</td><td>43.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>EXR</td><td>38</td><td>0.2%</td><td>63.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>MAA</td><td>44</td><td>5.2%</td><td>56.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>BXP</td><td>34</td><td>12.7%</td><td>64.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>HIW</td><td>5</td><td>2.1%</td><td>65.7</td><td>-</td></tr>
-<tr><td>MO</td><td>25</td><td>0.1%</td><td>59.1</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>STZ</td><td>37</td><td>14.4%</td><td>60.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>UNP</td><td>32</td><td>3.0%</td><td>47.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>CSX</td><td>31</td><td>-</td><td>54.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>WM</td><td>43</td><td>7.0%</td><td>58.2</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>RSG</td><td>44</td><td>11.0%</td><td>58.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
-<tr><td>WSO</td><td>47</td><td>14.0%</td><td>68.8</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>KO</td><td>25</td><td>2.1%</td><td>52.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>PG</td><td>47</td><td>11.6%</td><td>45.1</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>CLX</td><td>58</td><td>24.1%</td><td>43.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>CHD</td><td>34</td><td>7.7%</td><td>49.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ADM</td><td>39</td><td>9.2%</td><td>37.3</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>TSN</td><td>31</td><td>16.0%</td><td>54.2</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td></tr>
+<tr><td>HRL</td><td>45</td><td>17.4%</td><td>57.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SJM</td><td>26</td><td>3.9%</td><td>50.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>CPB</td><td>50</td><td>31.6%</td><td>51.0</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>MDLZ</td><td>29</td><td>15.4%</td><td>32.1</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>JNJ</td><td>29</td><td>1.8%</td><td>66.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ABT</td><td>45</td><td>32.5%</td><td>48.7</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>MDT</td><td>64</td><td>23.9%</td><td>38.9</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>BMY</td><td>43</td><td>6.7%</td><td>54.7</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>AMGN</td><td>44</td><td>6.0%</td><td>63.2</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SYK</td><td>54</td><td>21.2%</td><td>51.0</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>MMM</td><td>31</td><td>6.4%</td><td>60.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>ITW</td><td>37</td><td>8.6%</td><td>65.8</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SWK</td><td>16</td><td>-</td><td>73.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>DOV</td><td>13</td><td>3.4%</td><td>53.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>NUE</td><td>44</td><td>16.2%</td><td>31.4</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>PH</td><td>29</td><td>4.2%</td><td>67.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>GPC</td><td>48</td><td>19.4%</td><td>80.9</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>FAST</td><td>19</td><td>3.1%</td><td>60.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>PPG</td><td>36</td><td>6.7%</td><td>58.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>GD</td><td>16</td><td>3.1%</td><td>55.9</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>CAT</td><td>30</td><td>-</td><td>66.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>DE</td><td>32</td><td>3.7%</td><td>70.1</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>D</td><td>18</td><td>1.8%</td><td>66.1</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SRE</td><td>26</td><td>6.4%</td><td>62.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>XEL</td><td>40</td><td>2.9%</td><td>64.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>WEC</td><td>34</td><td>1.8%</td><td>62.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ATO</td><td>57</td><td>9.9%</td><td>66.3</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>PNW</td><td>24</td><td>1.0%</td><td>69.2</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>MCD</td><td>65</td><td>19.8%</td><td>37.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>TGT</td><td>40</td><td>7.5%</td><td>54.5</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>LOW</td><td>64</td><td>22.9%</td><td>53.6</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>TJX</td><td>50</td><td>10.0%</td><td>22.4</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ROST</td><td>50</td><td>11.4%</td><td>34.7</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>NKE</td><td>75</td><td>46.8%</td><td>34.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SBUX</td><td>36</td><td>4.3%</td><td>63.3</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>YUM</td><td>39</td><td>4.5%</td><td>65.3</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>BEN</td><td>22</td><td>1.0%</td><td>63.8</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>FDS</td><td>45</td><td>48.0%</td><td>40.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td></tr>
+<tr><td>ICE</td><td>77</td><td>33.8%</td><td>17.1</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>NTRS</td><td>28</td><td>1.4%</td><td>55.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>STT</td><td>21</td><td>2.4%</td><td>60.8</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>MSFT</td><td>74</td><td>30.8%</td><td>36.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ACN</td><td>75</td><td>58.6%</td><td>14.9</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>INTC</td><td>0</td><td>0.9%</td><td>69.2</td><td>-</td></tr>
+<tr><td>IBM</td><td>38</td><td>14.6%</td><td>52.2</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>APH</td><td>16</td><td>-</td><td>72.9</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>O</td><td>35</td><td>6.7%</td><td>56.0</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>REG</td><td>27</td><td>2.5%</td><td>53.9</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>LIN</td><td>33</td><td>0.9%</td><td>52.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>EMN</td><td>49</td><td>15.7%</td><td>35.7</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td></tr>
+<tr><td>VZ</td><td>53</td><td>16.4%</td><td>36.3</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>CWT</td><td>30</td><td>0.9%</td><td>67.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>AAPL</td><td>44</td><td>8.2%</td><td>49.1</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>AVGO</td><td>29</td><td>21.4%</td><td>45.8</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span></td></tr>
+<tr><td>ADI</td><td>54</td><td>10.8%</td><td>47.9</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>AMAT</td><td>33</td><td>-</td><td>74.6</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>LRCX</td><td>14</td><td>-</td><td>69.1</td><td><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>KLAC</td><td>38</td><td>-</td><td>71.5</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>MCHP</td><td>54</td><td>11.2%</td><td>49.7</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ABBV</td><td>35</td><td>1.0%</td><td>73.0</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>GILD</td><td>59</td><td>17.9%</td><td>53.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>CVS</td><td>7</td><td>1.2%</td><td>69.8</td><td>-</td></tr>
+<tr><td>UNH</td><td>31</td><td>2.9%</td><td>53.4</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>HUM</td><td>21</td><td>-</td><td>72.6</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span></td></tr>
+<tr><td>AXP</td><td>50</td><td>11.6%</td><td>71.8</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SCHW</td><td>54</td><td>13.3%</td><td>59.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>HBAN</td><td>32</td><td>6.2%</td><td>69.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>XOM</td><td>45</td><td>19.7%</td><td>25.4</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>EOG</td><td>51</td><td>12.8%</td><td>35.5</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>SLB</td><td>37</td><td>19.9%</td><td>12.7</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>OXY</td><td>38</td><td>26.3%</td><td>19.2</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td></tr>
+<tr><td>MPC</td><td>36</td><td>4.3%</td><td>47.7</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>FANG</td><td>60</td><td>17.3%</td><td>23.0</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>EXR</td><td>40</td><td>2.7%</td><td>46.7</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>MAA</td><td>44</td><td>6.1%</td><td>50.1</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>ARE</td><td>59</td><td>35.9%</td><td>52.0</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>BXP</td><td>32</td><td>12.2%</td><td>51.8</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>HIW</td><td>5</td><td>1.4%</td><td>53.7</td><td>-</td></tr>
+<tr><td>TMUS</td><td>52</td><td>34.0%</td><td>36.8</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td></tr>
+<tr><td>MO</td><td>30</td><td>2.8%</td><td>55.1</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>STZ</td><td>48</td><td>18.9%</td><td>48.5</td><td><span class="tag" title="Deep drawdown ≥15% from 52-week high. Strong entry signal — the stock is significantly below its peak, creating a potential yield-on-cost advantage.">DEEP_DIP</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span><span class="tag" title="Price trend is currently trending down. Confirms the stock is in a downtrend — entry should be validated by dip classification before acting.">TRENDING_DOWN</span></td></tr>
+<tr><td>UNP</td><td>33</td><td>2.1%</td><td>50.8</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>CSX</td><td>34</td><td>1.0%</td><td>51.7</td><td><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>WM</td><td>43</td><td>8.8%</td><td>52.3</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>RSG</td><td>46</td><td>12.6%</td><td>54.6</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
+<tr><td>WSO</td><td>45</td><td>12.9%</td><td>65.5</td><td><span class="tag" title="Moderate drawdown from 52-week high. Price has pulled back enough to improve entry yield, but not as extreme as a DEEP_DIP.">DIP</span><span class="tag" title="Positive dividend CAGR over the lookback period. The company is growing its dividend, which compounds your yield on cost over time.">DIVIDEND_GROWTH</span><span class="tag" title="Valuation composite score ≥50. Suggests the stock may be undervalued relative to its fundamentals and price drawdown.">UNDERVALUED</span></td></tr>
 </tbody></table>
 
 <h2 id="rejected-table">❌ Rejected</h2>
@@ -1135,7 +383,7 @@ function toggleDetail(id) {
 </tbody></table>
 
 <div class="footer">
-  Generated by Income Compounder Research OS &middot; 2026-06-26 15:25 UTC<br>
+  Generated by Income Compounder Research OS &middot; 2026-07-01 06:39 UTC<br>
   Architecture: 5-stage funnel &middot; Rule-based first, MiMo 2.5 fallback &middot; MYR base currency
 </div>
 
